@@ -1,0 +1,19 @@
+---
+title: " "
+image: profile.jpg
+about:
+  template: jolla
+  links:
+    - icon: twitter
+      text: Twitter
+      href: https://twitter.com
+    - icon: envelope
+      text: Email
+      href: mailto:creoxjz@gmail.com
+    - icon: github
+      text: Github
+      href: https://github.com/CreoHsia
+
+---
+
+This blog is a dedicated space where I document and share my learning journey, insights, and study recordings. From new concepts to detailed project explorations, you’ll find posts that reflect my growth and discoveries in various fields of study. Whether you’re following along or exploring similar paths, I hope you find value and inspiration in the records from my studies.

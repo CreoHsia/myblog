@@ -1,0 +1,15 @@
+{
+  "hash": "9eb86ff0d8a2b7bcf617547d809572b9",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Rcpp studying records\"\nauthor: \"Creo Hsia\"\ndate: \"2024-10-10\"\nformat: \n  html:\n    code-fold: true # 折叠代码块\n    code-copy: true  # 代码块显示复制按钮\n    code-overflow: 'scroll'\n    toc: true\n    toc-depth: 2\n    number-sections: true\n    editor: visual\n    \nknitr:\n  opts_chunk: \n    collapse: true\n    comment: \"#>\" \n---\n\n\n# Rcpp\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

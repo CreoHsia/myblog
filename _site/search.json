@@ -1,0 +1,79 @@
+[
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "Creo Hsia",
+    "section": "",
+    "text": "This blog is a dedicated space where I document and share my learning journey, insights, and study recordings. From new concepts to detailed project explorations, you’ll find posts that reflect my growth and discoveries in various fields of study. Whether you’re following along or exploring similar paths, I hope you find value and inspiration in the records from my studies."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Hi, I’m Creo Hsia.",
+    "section": "",
+    "text": "Hi, I’m Creo Hsia.\nI’m a graduate student specializing in statistics. On this blog, I document and share what I’m learning, offering insights and tutorials along the way.\nTo dive in, check out some of my most popular posts below. You can check out my most popular content below. You can find me on GitHub. Feel free to reach out to me via mail.\n\n\n\n\n\n\n\n\n   \n     \n     \n       Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Author\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nRcpp studying records\n\n\n\n\n\n\n\n\n\n\n\nOct 10, 2024\n\n\nCreo Hsia\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "blog.html",
+    "href": "blog.html",
+    "title": "All Blog Posts",
+    "section": "",
+    "text": "All Blog Posts\n\n\n\n\n\n\n\n   \n     \n     \n       Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\nPost With Code\n\n\n\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\nOct 11, 2024\n\n\n1 min\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\nOct 8, 2024\n\n\n1 min\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "posts/post-with-code/index.html",
+    "href": "posts/post-with-code/index.html",
+    "title": "Post With Code",
+    "section": "",
+    "text": "This is a post with executable code.\n\n1 + 1\n\n[1] 2"
+  },
+  {
+    "objectID": "intro.html",
+    "href": "intro.html",
+    "title": "Creo Hsia",
+    "section": "",
+    "text": "A blog contains studying recording from Creo Hsia."
+  },
+  {
+    "objectID": "posts/Rcpp study/Rcpp study.html",
+    "href": "posts/Rcpp study/Rcpp study.html",
+    "title": "Rcpp studying records",
+    "section": "",
+    "text": "1 Rcpp"
+  },
+  {
+    "objectID": "posts/Rcpp study/Rcpp study.html#quarto",
+    "href": "posts/Rcpp study/Rcpp study.html#quarto",
+    "title": "Rcpp studying records",
+    "section": "",
+    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org."
+  },
+  {
+    "objectID": "posts/Rcpp study/Rcpp study.html#running-code",
+    "href": "posts/Rcpp study/Rcpp study.html#running-code",
+    "title": "Rcpp studying records",
+    "section": "2 Running Code",
+    "text": "2 Running Code\nWhen you click the Render button a document will be generated that includes both content and the output of embedded code. You can embed code like this:\n\n\nCode\n1 + 1\n#&gt; [1] 2\n\n\nYou can add options to executable code like this\n\n#&gt; [1] 4\n\nThe echo: false option disables the printing of code (only output is displayed)."
+  },
+  {
+    "objectID": "posts/posts/Untitled.html",
+    "href": "posts/posts/Untitled.html",
+    "title": "post",
+    "section": "",
+    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org."
+  },
+  {
+    "objectID": "posts/posts/Untitled.html#quarto",
+    "href": "posts/posts/Untitled.html#quarto",
+    "title": "post",
+    "section": "",
+    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org."
+  },
+  {
+    "objectID": "posts/posts/Untitled.html#running-code",
+    "href": "posts/posts/Untitled.html#running-code",
+    "title": "post",
+    "section": "Running Code",
+    "text": "Running Code\nWhen you click the Render button a document will be generated that includes both content and the output of embedded code. You can embed code like this:\n\n1 + 1\n\n[1] 2\n\n\nYou can add options to executable code like this\n\n\n[1] 4\n\n\nThe echo: false option disables the printing of code (only output is displayed)."
+  }
+]
