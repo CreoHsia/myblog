@@ -1,10 +1,10 @@
 [
   {
-    "objectID": "about.html",
-    "href": "about.html",
+    "objectID": "blog.html",
+    "href": "blog.html",
     "title": "Hi, I’m Creo Hsia.",
     "section": "",
-    "text": "Hi, I’m Creo Hsia.\nI’m a graduate student specializing in statistics. On this blog, I document and share what I’m learning, offering insights and tutorials along the way.\nTo dive in, check out some of my most popular posts below. You can check out my most popular content below. You can find me on GitHub. Feel free to reach out to me via mail. :::\n\n\n\n\n\n\n\n   \n     \n     \n       Order By\n       Default\n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Title\n        \n         \n          Author\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\nDate\n\n\nTitle\n\n\nAuthor\n\n\n\n\n\n\nOct 10, 2024\n\n\nRcpp studying records\n\n\nCreo Hsia\n\n\n\n\n\nNo matching items"
+    "text": "Hi, I’m Creo Hsia.\nI’m a graduate student specializing in statistics. On this blog, I document and share what I’m learning, offering insights and tutorials along the way.\nTo dive in, check out some of my most popular posts below. You can check out my most popular content below. You can find me on GitHub. Feel free to reach out to me via mail. :::\n\n\n\n\n\n\n\n   \n     \n     \n       Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Author\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nRcpp studying records\n\n\n\n\n\n\n\n\n\n\n\nOct 10, 2024\n\n\nCreo Hsia\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "posts/Rcpp study/Rcpp study.html",
@@ -12,13 +12,6 @@
     "title": "Rcpp studying records",
     "section": "",
     "text": "The following code shows the basic format for defining a Rcpp function.\n\n\nCode\n\n#include&lt;Rcpp.h&gt;\nusing namespace Rcpp;\n\n// [[Rcpp::export]]\nRETURN_TYPE FUNCTION_NAME(ARGUMENT_TYPE ARGUMENT){\n\n    //do something\n\n    return RETURN_VALUE;\n}\n\n\n\n#include&lt;Rcpp.h&gt; : This sentence enables us to use classes and functions defined by the Rcpp package\nusing namespace Rcpp; : this sentence enables us to use them directly, other wise you need to declare that we use these function from package Rcpp by, e.g. Rcpp::NumericVector.\n\n\n\n// [[Rcpp::export]]：The function defined just below this sentence will be accessible from R.\nRETURN_TYPE FUNCTION_NAME(ARGUMENT_TYPE ARGUMENT){}：We need to specify data types of functions and arguments.\n\n\n\n\nThe function Rcpp::sourceCpp() will compile your source code and load the defined function into R. The below code defines a function that calculates the sum of a vector.\n\n\nCode\n//sum.cpp\n#include &lt;Rcpp.h&gt;\nusing namespace Rcpp;\n\n// [[Rcpp::export]]\ndouble rcpp_sum(NumericVector v){\n    double sum = 0;\n    for(int i=0; i&lt;v.length(); ++i){\n        sum += v[i];\n    }\n    return(sum);\n}\n\n\nNow we can load it into R by\n\n\nCode\nlibrary(Rcpp)\nsourceCpp('sum.cpp')\n\n\n\n\n\nWe can use our Rcpp functions as usual R functions\n\n\nCode\nrcpp_sum(1:10)\n#&gt; [1] 55\n\n\n\n\n\nWe can write Rcpp code in our R code in 3 ways.\n\n\nSave Rcpp code as string object in R and compile it with sourceCpp()\n\n\nCode\nsrc &lt;-\n\"#include &lt;Rcpp.h&gt;\nusing namespace Rcpp;\n// [[Rcpp::export]]\ndouble rcpp_sum(NumericVector v){\n  double sum = 0;\n  for(int i=0; i&lt;v.length(); ++i){\n    sum += v[i];\n  }\n  return(sum);\n}\"\n\nsourceCpp(code = src)\nrcpp_sum(1:10)\n#&gt; [1] 55\n\n\n\n\n\nWe can omit #include &lt;Rcpp.h&gt; and using namespase Rcpp when we use cppFunction().\n\n\nCode\nsrc &lt;-\"double rcpp_sum(NumericVector v){\n    double sum = 0;\n    for(int i=0; i&lt;v.length(); ++i){\n      sum += v[i];\n    }\n    return(sum);\n  }\n  \"\nRcpp::cppFunction(src)\nrcpp_sum(1:10)\n#&gt; [1] 55\n\n\n\n\n\nYou can evaluate a single C++ statement by using evalCpp().\n\n\nCode\n# Showing maximum value of double.\nevalCpp('std::numeric_limits&lt;double&gt;::max()')\n#&gt; [1] 1.797693e+308\n\n\n\n\n\n\nC++ 11 is a standard of C++ newly established in 2011. Many new features have been added to make C++ even easier for beginners.\n\n\n\n\n\n\nImportant\n\n\n\nThe code examples in this document are written with C++11 enabled.\n\n\n\n\nTo enable C++11, add the following decription in our Rcpp code. &gt; // [[Rcpp::plugins(\"cpp11\")]]\n\n\n\n\n\n\n\nCode\n// Initialize Vector\n// The next three are the same as c (1, 2, 3).\nNumericVector v1 = NumericVector::create(1.0, 2.0, 3.0);\nNumericVector v2 = {1.0, 2.0, 3.0};\nNumericVector v3   {1.0, 2.0, 3.0}; // You can omit \"=\".\n\n\n\n\n\nBy using decltype, you can declare a variable of the same type as an existing variable.\n\n\nCode\nint i;\ndecltype(i) x; // variable \"x\" will be int\n\n\n\n\n\nWe can write a for statement with the same style as R.\n\n\nCode\nIntegerVector v {1,2,3};\nint sum=0;\nfor(auto& x : v) {\n  sum += x;\n}"
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Creo Hsia",
-    "section": "",
-    "text": "This blog is a dedicated space where I document and share my learning journey, insights, and study recordings. From new concepts to detailed project explorations, you’ll find posts that reflect my growth and discoveries in various fields of study. Whether you’re following along or exploring similar paths, I hope you find value and inspiration in the records from my studies."
   },
   {
     "objectID": "posts/Rcpp study/Rcpp study.html#format-for-defining-a-function-in-rcpp",
@@ -56,10 +49,10 @@
     "text": "C++ 11 is a standard of C++ newly established in 2011. Many new features have been added to make C++ even easier for beginners.\n\n\n\n\n\n\nImportant\n\n\n\nThe code examples in this document are written with C++11 enabled.\n\n\n\n\nTo enable C++11, add the following decription in our Rcpp code. &gt; // [[Rcpp::plugins(\"cpp11\")]]\n\n\n\n\n\n\n\nCode\n// Initialize Vector\n// The next three are the same as c (1, 2, 3).\nNumericVector v1 = NumericVector::create(1.0, 2.0, 3.0);\nNumericVector v2 = {1.0, 2.0, 3.0};\nNumericVector v3   {1.0, 2.0, 3.0}; // You can omit \"=\".\n\n\n\n\n\nBy using decltype, you can declare a variable of the same type as an existing variable.\n\n\nCode\nint i;\ndecltype(i) x; // variable \"x\" will be int\n\n\n\n\n\nWe can write a for statement with the same style as R.\n\n\nCode\nIntegerVector v {1,2,3};\nint sum=0;\nfor(auto& x : v) {\n  sum += x;\n}"
   },
   {
-    "objectID": "blog.html",
-    "href": "blog.html",
-    "title": "Hi, I’m Creo Hsia.",
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Creo Hsia",
     "section": "",
-    "text": "Hi, I’m Creo Hsia.\nI’m a graduate student specializing in statistics. On this blog, I document and share what I’m learning, offering insights and tutorials along the way.\nTo dive in, check out some of my most popular posts below. You can check out my most popular content below. You can find me on GitHub. Feel free to reach out to me via mail. :::\n\n\n\n\n\n\n\n   \n     \n     \n       Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Author\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nRcpp studying records\n\n\n\n\n\n\n\n\n\n\n\nOct 10, 2024\n\n\nCreo Hsia\n\n\n\n\n\n\nNo matching items"
+    "text": "This blog is a dedicated space where I document and share my learning journey, insights, and study recordings. From new concepts to detailed project explorations, you’ll find posts that reflect my growth and discoveries in various fields of study. Whether you’re following along or exploring similar paths, I hope you find value and inspiration in the records from my studies."
   }
 ]

@@ -1,17 +1,5 @@
 [
   {
-    "listing": "/index.html",
-    "items": [
-      "/posts/Rcpp study/Rcpp study.html"
-    ]
-  },
-  {
-    "listing": "/about.html",
-    "items": [
-      "/posts/Rcpp study/Rcpp study.html"
-    ]
-  },
-  {
     "listing": "/blog.html",
     "items": [
       "/posts/Rcpp study/Rcpp study.html"
