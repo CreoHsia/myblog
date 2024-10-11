@@ -6,10 +6,15 @@
     ]
   },
   {
+    "listing": "/about.html",
+    "items": [
+      "/posts/Rcpp study/Rcpp study.html"
+    ]
+  },
+  {
     "listing": "/blog.html",
     "items": [
-      "/posts/post-with-code/index.html",
-      "/posts/welcome/index.html"
+      "/posts/Rcpp study/Rcpp study.html"
     ]
   }
 ]

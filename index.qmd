@@ -1,19 +1,17 @@
 ---
-listing:
-  contents: posts
-  sort: "date desc"
-  type: default
-  categories: true
-  sort-ui: true
-  filter-ui: true
-page-layout: full
-title-block-banner: true
+title: " "
+image: profile.jpg
+about:
+  template: jolla
+  links:
+    - icon: twitter
+      text: Twitter
+      href: https://twitter.com
+    - icon: envelope
+      text: Email
+      href: mailto:creoxjz@gmail.com
+    - icon: github
+      text: Github
+      href: https://github.com/CreoHsia
 ---
-
-::: {.g-col-12 .g-col-md-6 #about-me-text}
-# Hi, I'm Creo Hsia.
-I’m a graduate student specializing in statistics. On this blog, I document and share what I’m learning, offering insights and tutorials along the way.
-
-To dive in, check out some of my most popular posts below. You can check out my most popular content below. You can find me on [GitHub](https://github.com/CreoHsia). Feel free to reach out to me via [mail](mailto:creoxjz@gmail.com).
-
-:::
+This blog is a dedicated space where I document and share my learning journey, insights, and study recordings. From new concepts to detailed project explorations, you’ll find posts that reflect my growth and discoveries in various fields of study. Whether you’re following along or exploring similar paths, I hope you find value and inspiration in the records from my studies.

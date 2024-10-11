@@ -18,4 +18,178 @@ knitr:
     comment: "#>" 
 ---
 
+```{r}
+#| eval: false
+#| include: false
+```
+
 # Rcpp
+
+## Format for defining a function in Rcpp
+
+The following code shows the basic format for defining a Rcpp function.
+
+```{Rcpp}
+#| eval: false
+
+
+#include<Rcpp.h>
+using namespace Rcpp;
+
+// [[Rcpp::export]]
+RETURN_TYPE FUNCTION_NAME(ARGUMENT_TYPE ARGUMENT){
+
+    //do something
+
+    return RETURN_VALUE;
+}
+
+```
+
+-   `#include<Rcpp.h>` : This sentence enables us to use classes and functions defined by the Rcpp package
+
+-   `using namespace Rcpp;` : this sentence enables us to use them directly, other wise you need to declare that we use these function from package Rcpp by, e.g. `Rcpp::NumericVector`.
+
+<!-- -->
+
+-   `// [[Rcpp::export]]`：The function defined just below this sentence will be accessible from R.
+
+-   `RETURN_TYPE FUNCTION_NAME(ARGUMENT_TYPE ARGUMENT){}`：We need to specify data types of functions and arguments.
+
+## Compiling the code
+
+The function `Rcpp::sourceCpp()` will compile your source code and load the defined function into R. The below code defines a function that calculates the sum of a vector.
+
+```{Rcpp}
+#| eval: false
+//sum.cpp
+#include <Rcpp.h>
+using namespace Rcpp;
+
+// [[Rcpp::export]]
+double rcpp_sum(NumericVector v){
+    double sum = 0;
+    for(int i=0; i<v.length(); ++i){
+        sum += v[i];
+    }
+    return(sum);
+}
+```
+
+Now we can load it into R by
+
+```{R}
+library(Rcpp)
+sourceCpp('sum.cpp')
+```
+
+## Executing the function
+
+We can use our Rcpp functions as usual R functions
+
+```{r}
+rcpp_sum(1:10)
+```
+
+## Embedding Rcpp code in our R code
+
+We can write Rcpp code in our R code in 3 ways.
+
+### `sourceCpp()`
+
+Save Rcpp code as string object in R and compile it with `sourceCpp()`
+
+```{r}
+src <-
+"#include <Rcpp.h>
+using namespace Rcpp;
+// [[Rcpp::export]]
+double rcpp_sum(NumericVector v){
+  double sum = 0;
+  for(int i=0; i<v.length(); ++i){
+    sum += v[i];
+  }
+  return(sum);
+}"
+
+sourceCpp(code = src)
+rcpp_sum(1:10)
+```
+
+### `cppFunction()`
+
+We can omit `#include <Rcpp.h>` and `using namespase Rcpp` when we use `cppFunction()`.
+
+```{r}
+src <-"double rcpp_sum(NumericVector v){
+    double sum = 0;
+    for(int i=0; i<v.length(); ++i){
+      sum += v[i];
+    }
+    return(sum);
+  }
+  "
+Rcpp::cppFunction(src)
+rcpp_sum(1:10)
+```
+
+### `evalCpp()`
+
+You can evaluate a single C++ statement by using `evalCpp()`.
+
+```{r}
+# Showing maximum value of double.
+evalCpp('std::numeric_limits<double>::max()')
+```
+
+## C++ 11
+
+C++ 11 is a standard of C++ newly established in 2011. Many new features have been added to make C++ even easier for beginners.
+
+::: callout-important
+The code examples in this document are written with C++11 enabled.
+:::
+
+### Enabling C++11
+To enable `C++11`, add the following decription in our Rcpp code.
+> `// [[Rcpp::plugins("cpp11")]]`
+
+### Recommended C++11 features
+#### Initializer list
+
+```{Rcpp}
+#| eval: false
+
+// Initialize Vector
+// The next three are the same as c (1, 2, 3).
+NumericVector v1 = NumericVector::create(1.0, 2.0, 3.0);
+NumericVector v2 = {1.0, 2.0, 3.0};
+NumericVector v3   {1.0, 2.0, 3.0}; // You can omit "=".
+```
+
+
+#### decltype
+
+By using decltype, you can declare a variable of the same type as an existing variable.
+
+```{Rcpp}
+#| eval: false
+
+int i;
+decltype(i) x; // variable "x" will be int
+```
+
+
+#### Range-vased for-loop
+We can write a for statement with the same style as R.
+```{Rcpp}
+#| eval: false
+IntegerVector v {1,2,3};
+int sum=0;
+for(auto& x : v) {
+  sum += x;
+}
+```
+
+
+

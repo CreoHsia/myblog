@@ -4,8 +4,8 @@ website:
   title: "Creo Hsia"
   navbar:
     right:
-      - text: 'About'
-        href: about.qmd
+      - text: 'Blogs'
+        href: blog.qmd
       - icon: github
         href: https://github.com/CreoHsia
       - icon: envelope

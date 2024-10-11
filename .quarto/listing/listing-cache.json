@@ -3,6 +3,9 @@
     "index.qmd": [
       "posts"
     ],
+    "about.qmd": [
+      "posts"
+    ],
     "blog.qmd": [
       "posts"
     ]

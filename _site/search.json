@@ -2,78 +2,64 @@
   {
     "objectID": "about.html",
     "href": "about.html",
-    "title": "Creo Hsia",
-    "section": "",
-    "text": "This blog is a dedicated space where I document and share my learning journey, insights, and study recordings. From new concepts to detailed project explorations, you’ll find posts that reflect my growth and discoveries in various fields of study. Whether you’re following along or exploring similar paths, I hope you find value and inspiration in the records from my studies."
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
     "title": "Hi, I’m Creo Hsia.",
     "section": "",
-    "text": "Hi, I’m Creo Hsia.\nI’m a graduate student specializing in statistics. On this blog, I document and share what I’m learning, offering insights and tutorials along the way.\nTo dive in, check out some of my most popular posts below. You can check out my most popular content below. You can find me on GitHub. Feel free to reach out to me via mail.\n\n\n\n\n\n\n\n\n   \n     \n     \n       Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Author\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nRcpp studying records\n\n\n\n\n\n\n\n\n\n\n\nOct 10, 2024\n\n\nCreo Hsia\n\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "blog.html",
-    "href": "blog.html",
-    "title": "All Blog Posts",
-    "section": "",
-    "text": "All Blog Posts\n\n\n\n\n\n\n\n   \n     \n     \n       Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\nPost With Code\n\n\n\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\nOct 11, 2024\n\n\n1 min\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\nOct 8, 2024\n\n\n1 min\n\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "posts/post-with-code/index.html",
-    "href": "posts/post-with-code/index.html",
-    "title": "Post With Code",
-    "section": "",
-    "text": "This is a post with executable code.\n\n1 + 1\n\n[1] 2"
-  },
-  {
-    "objectID": "intro.html",
-    "href": "intro.html",
-    "title": "Creo Hsia",
-    "section": "",
-    "text": "A blog contains studying recording from Creo Hsia."
+    "text": "Hi, I’m Creo Hsia.\nI’m a graduate student specializing in statistics. On this blog, I document and share what I’m learning, offering insights and tutorials along the way.\nTo dive in, check out some of my most popular posts below. You can check out my most popular content below. You can find me on GitHub. Feel free to reach out to me via mail. :::\n\n\n\n\n\n\n\n   \n     \n     \n       Order By\n       Default\n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Title\n        \n         \n          Author\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\nDate\n\n\nTitle\n\n\nAuthor\n\n\n\n\n\n\nOct 10, 2024\n\n\nRcpp studying records\n\n\nCreo Hsia\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "posts/Rcpp study/Rcpp study.html",
     "href": "posts/Rcpp study/Rcpp study.html",
     "title": "Rcpp studying records",
     "section": "",
-    "text": "1 Rcpp"
+    "text": "The following code shows the basic format for defining a Rcpp function.\n\n\nCode\n\n#include&lt;Rcpp.h&gt;\nusing namespace Rcpp;\n\n// [[Rcpp::export]]\nRETURN_TYPE FUNCTION_NAME(ARGUMENT_TYPE ARGUMENT){\n\n    //do something\n\n    return RETURN_VALUE;\n}\n\n\n\n#include&lt;Rcpp.h&gt; : This sentence enables us to use classes and functions defined by the Rcpp package\nusing namespace Rcpp; : this sentence enables us to use them directly, other wise you need to declare that we use these function from package Rcpp by, e.g. Rcpp::NumericVector.\n\n\n\n// [[Rcpp::export]]：The function defined just below this sentence will be accessible from R.\nRETURN_TYPE FUNCTION_NAME(ARGUMENT_TYPE ARGUMENT){}：We need to specify data types of functions and arguments.\n\n\n\n\nThe function Rcpp::sourceCpp() will compile your source code and load the defined function into R. The below code defines a function that calculates the sum of a vector.\n\n\nCode\n//sum.cpp\n#include &lt;Rcpp.h&gt;\nusing namespace Rcpp;\n\n// [[Rcpp::export]]\ndouble rcpp_sum(NumericVector v){\n    double sum = 0;\n    for(int i=0; i&lt;v.length(); ++i){\n        sum += v[i];\n    }\n    return(sum);\n}\n\n\nNow we can load it into R by\n\n\nCode\nlibrary(Rcpp)\nsourceCpp('sum.cpp')\n\n\n\n\n\nWe can use our Rcpp functions as usual R functions\n\n\nCode\nrcpp_sum(1:10)\n#&gt; [1] 55\n\n\n\n\n\nWe can write Rcpp code in our R code in 3 ways.\n\n\nSave Rcpp code as string object in R and compile it with sourceCpp()\n\n\nCode\nsrc &lt;-\n\"#include &lt;Rcpp.h&gt;\nusing namespace Rcpp;\n// [[Rcpp::export]]\ndouble rcpp_sum(NumericVector v){\n  double sum = 0;\n  for(int i=0; i&lt;v.length(); ++i){\n    sum += v[i];\n  }\n  return(sum);\n}\"\n\nsourceCpp(code = src)\nrcpp_sum(1:10)\n#&gt; [1] 55\n\n\n\n\n\nWe can omit #include &lt;Rcpp.h&gt; and using namespase Rcpp when we use cppFunction().\n\n\nCode\nsrc &lt;-\"double rcpp_sum(NumericVector v){\n    double sum = 0;\n    for(int i=0; i&lt;v.length(); ++i){\n      sum += v[i];\n    }\n    return(sum);\n  }\n  \"\nRcpp::cppFunction(src)\nrcpp_sum(1:10)\n#&gt; [1] 55\n\n\n\n\n\nYou can evaluate a single C++ statement by using evalCpp().\n\n\nCode\n# Showing maximum value of double.\nevalCpp('std::numeric_limits&lt;double&gt;::max()')\n#&gt; [1] 1.797693e+308\n\n\n\n\n\n\nC++ 11 is a standard of C++ newly established in 2011. Many new features have been added to make C++ even easier for beginners.\n\n\n\n\n\n\nImportant\n\n\n\nThe code examples in this document are written with C++11 enabled.\n\n\n\n\nTo enable C++11, add the following decription in our Rcpp code. &gt; // [[Rcpp::plugins(\"cpp11\")]]\n\n\n\n\n\n\n\nCode\n// Initialize Vector\n// The next three are the same as c (1, 2, 3).\nNumericVector v1 = NumericVector::create(1.0, 2.0, 3.0);\nNumericVector v2 = {1.0, 2.0, 3.0};\nNumericVector v3   {1.0, 2.0, 3.0}; // You can omit \"=\".\n\n\n\n\n\nBy using decltype, you can declare a variable of the same type as an existing variable.\n\n\nCode\nint i;\ndecltype(i) x; // variable \"x\" will be int\n\n\n\n\n\nWe can write a for statement with the same style as R.\n\n\nCode\nIntegerVector v {1,2,3};\nint sum=0;\nfor(auto& x : v) {\n  sum += x;\n}"
   },
   {
-    "objectID": "posts/Rcpp study/Rcpp study.html#quarto",
-    "href": "posts/Rcpp study/Rcpp study.html#quarto",
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Creo Hsia",
+    "section": "",
+    "text": "This blog is a dedicated space where I document and share my learning journey, insights, and study recordings. From new concepts to detailed project explorations, you’ll find posts that reflect my growth and discoveries in various fields of study. Whether you’re following along or exploring similar paths, I hope you find value and inspiration in the records from my studies."
+  },
+  {
+    "objectID": "posts/Rcpp study/Rcpp study.html#format-for-defining-a-function-in-rcpp",
+    "href": "posts/Rcpp study/Rcpp study.html#format-for-defining-a-function-in-rcpp",
     "title": "Rcpp studying records",
     "section": "",
-    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org."
+    "text": "The following code shows the basic format for defining a Rcpp function.\n\n\nCode\n\n#include&lt;Rcpp.h&gt;\nusing namespace Rcpp;\n\n// [[Rcpp::export]]\nRETURN_TYPE FUNCTION_NAME(ARGUMENT_TYPE ARGUMENT){\n\n    //do something\n\n    return RETURN_VALUE;\n}\n\n\n\n#include&lt;Rcpp.h&gt; : This sentence enables us to use classes and functions defined by the Rcpp package\nusing namespace Rcpp; : this sentence enables us to use them directly, other wise you need to declare that we use these function from package Rcpp by, e.g. Rcpp::NumericVector.\n\n\n\n// [[Rcpp::export]]：The function defined just below this sentence will be accessible from R.\nRETURN_TYPE FUNCTION_NAME(ARGUMENT_TYPE ARGUMENT){}：We need to specify data types of functions and arguments."
   },
   {
-    "objectID": "posts/Rcpp study/Rcpp study.html#running-code",
-    "href": "posts/Rcpp study/Rcpp study.html#running-code",
+    "objectID": "posts/Rcpp study/Rcpp study.html#compiling-the-code",
+    "href": "posts/Rcpp study/Rcpp study.html#compiling-the-code",
     "title": "Rcpp studying records",
-    "section": "2 Running Code",
-    "text": "2 Running Code\nWhen you click the Render button a document will be generated that includes both content and the output of embedded code. You can embed code like this:\n\n\nCode\n1 + 1\n#&gt; [1] 2\n\n\nYou can add options to executable code like this\n\n#&gt; [1] 4\n\nThe echo: false option disables the printing of code (only output is displayed)."
-  },
-  {
-    "objectID": "posts/posts/Untitled.html",
-    "href": "posts/posts/Untitled.html",
-    "title": "post",
     "section": "",
-    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org."
+    "text": "The function Rcpp::sourceCpp() will compile your source code and load the defined function into R. The below code defines a function that calculates the sum of a vector.\n\n\nCode\n//sum.cpp\n#include &lt;Rcpp.h&gt;\nusing namespace Rcpp;\n\n// [[Rcpp::export]]\ndouble rcpp_sum(NumericVector v){\n    double sum = 0;\n    for(int i=0; i&lt;v.length(); ++i){\n        sum += v[i];\n    }\n    return(sum);\n}\n\n\nNow we can load it into R by\n\n\nCode\nlibrary(Rcpp)\nsourceCpp('sum.cpp')"
   },
   {
-    "objectID": "posts/posts/Untitled.html#quarto",
-    "href": "posts/posts/Untitled.html#quarto",
-    "title": "post",
+    "objectID": "posts/Rcpp study/Rcpp study.html#executing-the-function",
+    "href": "posts/Rcpp study/Rcpp study.html#executing-the-function",
+    "title": "Rcpp studying records",
     "section": "",
-    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org."
+    "text": "We can use our Rcpp functions as usual R functions\n\n\nCode\nrcpp_sum(1:10)\n#&gt; [1] 55"
   },
   {
-    "objectID": "posts/posts/Untitled.html#running-code",
-    "href": "posts/posts/Untitled.html#running-code",
-    "title": "post",
-    "section": "Running Code",
-    "text": "Running Code\nWhen you click the Render button a document will be generated that includes both content and the output of embedded code. You can embed code like this:\n\n1 + 1\n\n[1] 2\n\n\nYou can add options to executable code like this\n\n\n[1] 4\n\n\nThe echo: false option disables the printing of code (only output is displayed)."
+    "objectID": "posts/Rcpp study/Rcpp study.html#embedding-rcpp-code-in-our-r-code",
+    "href": "posts/Rcpp study/Rcpp study.html#embedding-rcpp-code-in-our-r-code",
+    "title": "Rcpp studying records",
+    "section": "",
+    "text": "We can write Rcpp code in our R code in 3 ways.\n\n\nSave Rcpp code as string object in R and compile it with sourceCpp()\n\n\nCode\nsrc &lt;-\n\"#include &lt;Rcpp.h&gt;\nusing namespace Rcpp;\n// [[Rcpp::export]]\ndouble rcpp_sum(NumericVector v){\n  double sum = 0;\n  for(int i=0; i&lt;v.length(); ++i){\n    sum += v[i];\n  }\n  return(sum);\n}\"\n\nsourceCpp(code = src)\nrcpp_sum(1:10)\n#&gt; [1] 55\n\n\n\n\n\nWe can omit #include &lt;Rcpp.h&gt; and using namespase Rcpp when we use cppFunction().\n\n\nCode\nsrc &lt;-\"double rcpp_sum(NumericVector v){\n    double sum = 0;\n    for(int i=0; i&lt;v.length(); ++i){\n      sum += v[i];\n    }\n    return(sum);\n  }\n  \"\nRcpp::cppFunction(src)\nrcpp_sum(1:10)\n#&gt; [1] 55\n\n\n\n\n\nYou can evaluate a single C++ statement by using evalCpp().\n\n\nCode\n# Showing maximum value of double.\nevalCpp('std::numeric_limits&lt;double&gt;::max()')\n#&gt; [1] 1.797693e+308"
+  },
+  {
+    "objectID": "posts/Rcpp study/Rcpp study.html#c-11",
+    "href": "posts/Rcpp study/Rcpp study.html#c-11",
+    "title": "Rcpp studying records",
+    "section": "",
+    "text": "C++ 11 is a standard of C++ newly established in 2011. Many new features have been added to make C++ even easier for beginners.\n\n\n\n\n\n\nImportant\n\n\n\nThe code examples in this document are written with C++11 enabled.\n\n\n\n\nTo enable C++11, add the following decription in our Rcpp code. &gt; // [[Rcpp::plugins(\"cpp11\")]]\n\n\n\n\n\n\n\nCode\n// Initialize Vector\n// The next three are the same as c (1, 2, 3).\nNumericVector v1 = NumericVector::create(1.0, 2.0, 3.0);\nNumericVector v2 = {1.0, 2.0, 3.0};\nNumericVector v3   {1.0, 2.0, 3.0}; // You can omit \"=\".\n\n\n\n\n\nBy using decltype, you can declare a variable of the same type as an existing variable.\n\n\nCode\nint i;\ndecltype(i) x; // variable \"x\" will be int\n\n\n\n\n\nWe can write a for statement with the same style as R.\n\n\nCode\nIntegerVector v {1,2,3};\nint sum=0;\nfor(auto& x : v) {\n  sum += x;\n}"
+  },
+  {
+    "objectID": "blog.html",
+    "href": "blog.html",
+    "title": "Hi, I’m Creo Hsia.",
+    "section": "",
+    "text": "Hi, I’m Creo Hsia.\nI’m a graduate student specializing in statistics. On this blog, I document and share what I’m learning, offering insights and tutorials along the way.\nTo dive in, check out some of my most popular posts below. You can check out my most popular content below. You can find me on GitHub. Feel free to reach out to me via mail. :::\n\n\n\n\n\n\n\n   \n     \n     \n       Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Author\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nRcpp studying records\n\n\n\n\n\n\n\n\n\n\n\nOct 10, 2024\n\n\nCreo Hsia\n\n\n\n\n\n\nNo matching items"
   }
 ]
