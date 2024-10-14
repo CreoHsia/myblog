@@ -238,7 +238,7 @@ roc_auc <- function(true_labels, predicted_probs, class_name) {
 
 ## A real example
 
-Apply the Naive Bayes classifier to the adult dataset for classification.
+Apply the Naive Bayes classifier to the adult dataset for classification. The data can be found in [Github](https://github.com/CreoHsia/myblog/tree/main/posts/Naive%20bayes%20model)
 
 ```{r}
 #| code-fold: false
@@ -260,7 +260,6 @@ roc$confusion_matrix
 ```
 
 ```{r}
-roc
 roc$roc_plot
 ```
 

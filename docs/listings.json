@@ -1,7 +1,8 @@
 [
   {
-    "listing": "/index.html",
+    "listing": "/blog.html",
     "items": [
+      "/posts/Naive bayes model/Naive bayes model.html",
       "/posts/Rcpp study/Rcpp study.html"
     ]
   }
