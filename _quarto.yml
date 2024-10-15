@@ -7,6 +7,8 @@ website:
     right:
       - text: 'Blogs'
         href: blog.qmd
+      - icon: twitter
+        href: https://x.com/CreoHAHAHA
       - icon: github
         href: https://github.com/CreoHsia
       - icon: envelope
