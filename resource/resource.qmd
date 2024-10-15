@@ -1,0 +1,11 @@
+---
+title: "Some Resouces"
+description: "**Here you’ll find a collection of resources, showcasing the combination of hard work and late-night coffee-fueled creativity. From complex `problem sets` to neatly organized `presentations`, this is the treasure trove of knowledge I’ve gathered along the way. Feel free to explore, learn, or just reflect on how much work I managed to push to the last minute. Whether you’re here for inspiration, procrastination, or simply out of curiosity, these materials might offer something useful – or at least give you a laugh at my late-night efforts!**"
+format: html
+editor: visual
+---
+----
+
+
++ Home work of `statistical inference` chapter 8. [Document](statistical inference chp8 solusion.pdf)
++ $\LaTeX$ template of the homework can be found in [GitHub](https://github.com/CreoHsia/latex-template).

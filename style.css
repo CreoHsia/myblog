@@ -33,9 +33,6 @@
 }
 
 /* Global styles */
-nav {
-    background-color: rgba(248,242,255,0.2); /* 如果有导航栏，也可以调整 */
-}
 
 body {
     font-family: "Roboto Slab", "SimHei", serif;
@@ -159,8 +156,6 @@ table td:hover {
     box-shadow: 0 0 5px 2px var(--main-color); /* 缩小阴影的模糊半径和扩展半径 */
     border-radius: 0.5em; /* 设置圆角效果 */
 }
-
-
 
 /* Selection background */
 ::selection {

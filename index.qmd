@@ -14,7 +14,8 @@ about:
       text: Github
       href: https://github.com/CreoHsia
 ---
-I am a graduate student specializing in statistics, working under the supervision of [Yaowu Liu](https://yaowuliu.github.io).
+
+Hi! You can call me `Creo`. I am a graduate student specializing in statistics, working under the supervision of [Yaowu Liu](https://yaowuliu.github.io).
 
 This blog is a dedicated space where I document and share my learning journey, insights, and study recordings. From new concepts to detailed project explorations, you’ll find posts that reflect my growth and discoveries in various fields of study. 
 Whether you’re following along or exploring similar paths, I hope you find value and inspiration in the records from my studies. 

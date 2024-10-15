@@ -5,5 +5,16 @@
       "/posts/Naive bayes model/Naive bayes model.html",
       "/posts/Rcpp study/Rcpp study.html"
     ]
+  },
+  {
+    "listing": "/resource/resource.html",
+    "items": []
+  },
+  {
+    "listing": "/resource.html",
+    "items": [
+      "/posts/Naive bayes model/Naive bayes model.html",
+      "/posts/Rcpp study/Rcpp study.html"
+    ]
   }
 ]
