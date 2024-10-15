@@ -188,10 +188,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#function-naivebayes" id="toc-function-naivebayes" class="nav-link active" data-scroll-target="#function-naivebayes"><span class="header-section-number">1</span> Function <code>naiveBayes</code></a></li>
-  <li><a href="#function-predict.naivebayes" id="toc-function-predict.naivebayes" class="nav-link" data-scroll-target="#function-predict.naivebayes"><span class="header-section-number">2</span> Function <code>predict.naiveBayes</code></a></li>
+  <li><a href="#function-bayesclasifier" id="toc-function-bayesclasifier" class="nav-link active" data-scroll-target="#function-bayesclasifier"><span class="header-section-number">1</span> Function <code>Bayesclasifier</code></a></li>
+  <li><a href="#function-predict.naivebayes_clasifier" id="toc-function-predict.naivebayes_clasifier" class="nav-link" data-scroll-target="#function-predict.naivebayes_clasifier"><span class="header-section-number">2</span> Function <code>predict.naiveBayes_clasifier</code></a></li>
   <li><a href="#function-confusion_matrix-and-roc_auc" id="toc-function-confusion_matrix-and-roc_auc" class="nav-link" data-scroll-target="#function-confusion_matrix-and-roc_auc"><span class="header-section-number">3</span> Function <code>confusion_matrix</code> and <code>roc_auc</code></a></li>
-  <li><a href="#a-real-example" id="toc-a-real-example" class="nav-link" data-scroll-target="#a-real-example"><span class="header-section-number">4</span> A real example</a></li>
+  <li><a href="#function-plot.roc_auc" id="toc-function-plot.roc_auc" class="nav-link" data-scroll-target="#function-plot.roc_auc"><span class="header-section-number">4</span> Function <code>plot.roc_auc</code></a></li>
+  <li><a href="#a-real-example" id="toc-a-real-example" class="nav-link" data-scroll-target="#a-real-example"><span class="header-section-number">5</span> A real example</a></li>
+  <li><a href="#function-print.naivebayes_clasifier" id="toc-function-print.naivebayes_clasifier" class="nav-link" data-scroll-target="#function-print.naivebayes_clasifier"><span class="header-section-number">6</span> Function <code>print.naiveBayes_clasifier</code></a></li>
+  <li><a href="#supervisor-provided-r-code-for-naive-bayes-classifier" id="toc-supervisor-provided-r-code-for-naive-bayes-classifier" class="nav-link" data-scroll-target="#supervisor-provided-r-code-for-naive-bayes-classifier"><span class="header-section-number">7</span> Supervisor-provided R code for Naive Bayes Classifier</a></li>
   </ul>
 </nav>
     </div>
@@ -204,463 +207,630 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <hr>
 <p>We build a Naive Bayes classifier that can handle any classification problem, assuming continuous variables follow a normal distribution. This classifier is not limited to the specific problem in the exercises.</p>
-<section id="function-naivebayes" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="function-naivebayes"><span class="header-section-number">1</span> Function <code>naiveBayes</code></h2>
+<section id="function-bayesclasifier" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="function-bayesclasifier"><span class="header-section-number">1</span> Function <code>Bayesclasifier</code></h2>
 <p>The following function fits a Naive Bayes model to the data, estimating prior probabilities and conditional probabilities for both continuous and categorical features. This function takes four inputs: the <code>data</code>, the <code>response</code> (a <code>character string</code> specifying which column contains the class labels), the <code>prior</code> (if provided), and the <code>Laplace smoothing parameter</code>. The output is a list containing the conditional probabilities for each variable, the prior probabilities, an indicator of which columns are numeric or categorical, and the levels of the class labels. The returned list is of class <code>naiveBayes</code>, which allows for method dispatching specific to this model.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>naiveBayes <span class="ot">&lt;-</span> <span class="cf">function</span>(data, response, <span class="at">prior =</span> <span class="cn">NULL</span>, <span class="at">alpha =</span> <span class="dv">0</span>) {</span>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Bayesclasifier <span class="ot">&lt;-</span> <span class="cf">function</span>(data, response, <span class="at">prior =</span> <span class="cn">NULL</span>, <span class="at">alpha =</span> <span class="dv">0</span>) {</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 1: Extract the target variable (response)</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 'label' contains the target class from the 'response' column of the data</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  label <span class="ot">&lt;-</span> data[[response]]</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  level <span class="ot">&lt;-</span> <span class="fu">unique</span>(label)<span class="co"># Identify unique classes in the target variable</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Remove the response column from the data </span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="co">#(since it should not be used as a predictor)</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  data[[response]] <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 2: Calculate prior probabilities if not provided</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.null</span>(prior)) {</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    prior <span class="ot">&lt;-</span> <span class="fu">prop.table</span>(<span class="fu">table</span>(label))</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 3: Identify numeric and categorical columns</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  is_num <span class="ot">&lt;-</span> <span class="fu">sapply</span>(data, <span class="cf">function</span>(x) <span class="fu">is.numeric</span>(x))</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 4: Process numeric and categorical columns separately</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  tbl <span class="ot">&lt;-</span> <span class="fu">lapply</span>(data,<span class="cf">function</span>(col){</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">is.numeric</span>(col)){</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>      <span class="co"># For numeric columns, calculate the mean and variance</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>      <span class="co">#for each class in the target variable</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>      means <span class="ot">&lt;-</span> <span class="fu">tapply</span>(col, label, mean,<span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>      sd <span class="ot">&lt;-</span> <span class="fu">tapply</span>(col, label, sd,<span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cbind</span>(means,sd)</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> {</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>      <span class="co"># For categorical columns, calculate smoothed counts </span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>      <span class="co"># and conditional probabilities</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Do not display the count of NA values (this is the default behavior)</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>      counts <span class="ot">&lt;-</span> <span class="fu">table</span>(label, col)</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Apply Laplace smoothing to avoid zero probabilities</span></span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>      smoothed_counts <span class="ot">&lt;-</span> counts <span class="sc">+</span> alpha </span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Calculate conditional probabilities</span></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>      smoothed_probs <span class="ot">&lt;-</span> <span class="fu">prop.table</span>(smoothed_counts, <span class="at">margin =</span> <span class="dv">1</span>)  </span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(smoothed_probs)</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Return the model as a list containing: </span></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>  <span class="co">#1) prior probabilities, 2) tables of statistics, 3) and metadata</span></span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>  result <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">prior =</span> prior, <span class="at">tables =</span> tbl, </span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">isnumeric=</span>is_num,</span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">level=</span>level)</span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Assign a class to the result for method dispatch</span></span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">class</span>(result) <span class="ot">&lt;-</span> <span class="st">"naiveBayes"</span></span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(result)</span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>} </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  label_counts <span class="ot">&lt;-</span> <span class="fu">table</span>(label)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  level <span class="ot">&lt;-</span> <span class="fu">unique</span>(label)<span class="co"># Identify unique classes in the target variable</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Remove the response column from the data </span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">#(since it should not be used as a predictor)</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  data[[response]] <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 2: Calculate prior probabilities if not provided</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.null</span>(prior)) {</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    prior <span class="ot">&lt;-</span> <span class="fu">prop.table</span>(label_counts)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 3: Identify numeric and categorical columns</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  is_num <span class="ot">&lt;-</span> <span class="fu">sapply</span>(data, <span class="cf">function</span>(x) <span class="fu">is.numeric</span>(x))</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 4: Process numeric and categorical columns separately</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  tbl <span class="ot">&lt;-</span> <span class="fu">lapply</span>(data,<span class="cf">function</span>(col){</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">is.numeric</span>(col)){</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>      <span class="co"># For numeric columns, calculate the mean and variance</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>      <span class="co">#for each class in the target variable</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>      means <span class="ot">&lt;-</span> <span class="fu">tapply</span>(col, label, mean,<span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>      sd <span class="ot">&lt;-</span> <span class="fu">tapply</span>(col, label, sd,<span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cbind</span>(means,sd)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> {</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>      <span class="co"># For categorical columns, calculate smoothed counts </span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>      <span class="co"># and conditional probabilities</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Do not display the count of NA values (this is the default behavior)</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>      counts <span class="ot">&lt;-</span> <span class="fu">table</span>(label, col)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Apply Laplace smoothing to avoid zero probabilities</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>      smoothed_probs <span class="ot">&lt;-</span> <span class="fu">sweep</span>(counts <span class="sc">+</span> alpha, <span class="dv">1</span>,</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>                              label_counts<span class="sc">+</span>alpha<span class="sc">*</span><span class="fu">ncol</span>(counts), <span class="st">"/"</span>)</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Calculate conditional probabilities</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(smoothed_probs)</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Return the model as a list containing: </span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>  <span class="co">#1) prior probabilities, 2) tables of statistics, 3) and metadata</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>  result <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">prior =</span> prior, <span class="at">tables =</span> tbl, </span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">isnumeric=</span>is_num,</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">level=</span>level)</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Assign a class to the result for method dispatch</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">class</span>(result) <span class="ot">&lt;-</span> <span class="st">"naiveBayes_clasifier"</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(result)</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>} </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
-<section id="function-predict.naivebayes" class="level2" data-number="2">
-<h2 data-number="2" class="anchored" data-anchor-id="function-predict.naivebayes"><span class="header-section-number">2</span> Function <code>predict.naiveBayes</code></h2>
+<section id="function-predict.naivebayes_clasifier" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="function-predict.naivebayes_clasifier"><span class="header-section-number">2</span> Function <code>predict.naiveBayes_clasifier</code></h2>
 <p>The predict function takes a trained Naive Bayes model and new data as inputs, and returns predicted class labels or class probabilities depending on the specified type. For missing values (<code>NA</code>), the function handles them by assigning neutral probabilities (effectively ignoring them in the likelihood calculation).</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>predict.naiveBayes <span class="ot">&lt;-</span> <span class="cf">function</span>(model, newdata, <span class="at">type =</span> <span class="st">"class"</span>) {</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 1: Convert categorical variables to factors with matching levels</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">names</span>(model<span class="sc">$</span>tables)) {</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="sc">!</span>model<span class="sc">$</span>isnumeric[i]) {</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Ensure categorical variables in newdata </span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>      <span class="co"># have the same levels as those in the model</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>      newdata[[i]] <span class="ot">&lt;-</span> <span class="fu">factor</span>(newdata[[i]],</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>                             <span class="at">levels =</span> <span class="fu">colnames</span>(model<span class="sc">$</span>tables[[i]]))</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 2: Prepare for prediction (pre-compute constants)</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  logprior <span class="ot">&lt;-</span> <span class="fu">log</span>(model<span class="sc">$</span>prior)   </span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  len <span class="ot">&lt;-</span> <span class="fu">length</span>(model<span class="sc">$</span>prior)</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Match newdata columns with model attributes</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  match_idx <span class="ot">&lt;-</span> <span class="fu">match</span>(<span class="fu">names</span>(model<span class="sc">$</span>tables), <span class="fu">names</span>(newdata))  </span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 3: Preallocate log probability matrix for faster computation</span></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  Logprob <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="at">nrow =</span> len, <span class="at">ncol =</span> <span class="fu">nrow</span>(newdata))</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 4: Compute log-probabilities for both numeric and categorical data</span></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (v <span class="cf">in</span> <span class="fu">seq_along</span>(match_idx)) {</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    nd <span class="ot">&lt;-</span> newdata[, match_idx[v]] <span class="co"># Get the relevant column of newdata</span></span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (model<span class="sc">$</span>isnumeric[v]) {</span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>      <span class="co"># For numeric columns, calculate Gaussian likelihoods</span></span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>      tbl <span class="ot">&lt;-</span> model<span class="sc">$</span>tables[[v]]</span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>      means <span class="ot">&lt;-</span> tbl[, <span class="dv">1</span>]</span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>      sd <span class="ot">&lt;-</span> tbl[, <span class="dv">2</span>]</span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Apply Gaussian log-likelihood using vectorized operations</span></span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>      Logprob <span class="ot">&lt;-</span> Logprob <span class="sc">+</span> <span class="fu">sapply</span>(nd, <span class="cf">function</span>(x) {</span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>        <span class="co"># If value is NA, return a vector of zeros for all classes</span></span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (<span class="fu">is.na</span>(x)) {</span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>          <span class="fu">rep.int</span>(<span class="dv">0</span>, len)  </span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>        } <span class="cf">else</span> {</span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>          <span class="fu">dnorm</span>(x, <span class="at">mean =</span> means, <span class="at">sd =</span> sd, <span class="at">log =</span> <span class="cn">TRUE</span>)<span class="co"># Compute log likelihood</span></span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>      })</span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
-<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>      <span class="co"># For categorical columns, </span></span>
-<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>      <span class="co"># retrieve the log probabilities from the model's tables</span></span>
-<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>      Logprob <span class="ot">&lt;-</span> Logprob <span class="sc">+</span> <span class="fu">sapply</span>(nd,<span class="cf">function</span>(x){</span>
-<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (<span class="fu">is.na</span>(x)){</span>
-<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>          <span class="co"># If value is NA, return a vector of zeros for all classes</span></span>
-<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>          <span class="fu">rep.int</span>(<span class="dv">0</span>,len) </span>
-<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>        } <span class="cf">else</span> {</span>
-<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>          <span class="co"># Lookup the log-probability </span></span>
-<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>          <span class="co"># avoid log(0)</span></span>
-<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>          <span class="fu">log</span>(model<span class="sc">$</span>tables[[v]][, x]<span class="sc">+</span><span class="fl">1e-8</span>)</span>
-<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>      })</span>
-<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 5: Add log-priors to the computed log-likelihoods</span></span>
-<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>  Logprob <span class="ot">&lt;-</span> <span class="fu">sweep</span>(Logprob, <span class="dv">1</span>, logprior, <span class="st">"+"</span>)</span>
-<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colnames</span>(Logprob) <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
-<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 6: Return predictions based on the specified type ('class' or 'raw')</span></span>
-<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (type <span class="sc">==</span> <span class="st">"class"</span>) {</span>
-<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>    pred_classes <span class="ot">&lt;-</span> model<span class="sc">$</span>level[<span class="fu">apply</span>(Logprob,<span class="dv">2</span>,which.max)]</span>
-<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(pred_classes)</span>
-<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
-<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>    <span class="co"># If type == "raw", return probabilities for all classes</span></span>
-<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>    probs <span class="ot">&lt;-</span> <span class="fu">exp</span>(Logprob)  <span class="co"># Convert log-probabilities back to normal scale</span></span>
-<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Normalize probabilities so they sum to 1</span></span>
-<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>    probs <span class="ot">&lt;-</span> <span class="fu">apply</span>(probs,<span class="dv">2</span>,<span class="cf">function</span>(x)x<span class="sc">/</span><span class="fu">sum</span>(x) ) </span>
-<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">t</span>(probs))</span>
-<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>predict.naiveBayes_clasifier <span class="ot">&lt;-</span> <span class="cf">function</span>(model, newdata, <span class="at">type =</span> <span class="st">"class"</span>) {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  logprior <span class="ot">&lt;-</span> <span class="fu">log</span>(model<span class="sc">$</span>prior)   </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  len <span class="ot">&lt;-</span> <span class="fu">length</span>(model<span class="sc">$</span>prior)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Match newdata columns with model attributes</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  match_idx <span class="ot">&lt;-</span> <span class="fu">match</span>(<span class="fu">names</span>(model<span class="sc">$</span>tables), <span class="fu">names</span>(newdata))  </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 3: Preallocate log probability matrix for faster computation</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  Logprob <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="at">nrow =</span> len, <span class="at">ncol =</span> <span class="fu">nrow</span>(newdata),<span class="at">dimnames =</span> <span class="fu">list</span>(model<span class="sc">$</span>level,<span class="cn">NULL</span>))</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 1: Convert categorical variables to factors with matching levels</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (v <span class="cf">in</span> <span class="fu">seq_along</span>(match_idx)) {</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (model<span class="sc">$</span>isnumeric[v]){</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>      nd <span class="ot">&lt;-</span> newdata[, match_idx[v]]</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>      tbl <span class="ot">&lt;-</span> model<span class="sc">$</span>tables[[v]]</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>      means <span class="ot">&lt;-</span> tbl[, <span class="dv">1</span>]</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>      sd <span class="ot">&lt;-</span> tbl[, <span class="dv">2</span>]</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>      notna <span class="ot">&lt;-</span> <span class="sc">!</span><span class="fu">is.na</span>(nd)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>      Logprob[,notna] <span class="ot">&lt;-</span>Logprob[,notna]<span class="sc">+</span> <span class="fu">vapply</span>(nd[notna],<span class="cf">function</span>(x) <span class="fu">dnorm</span>(x,means,sd,<span class="at">log=</span><span class="cn">TRUE</span>),<span class="fu">numeric</span>(len))</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> {</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>      nd <span class="ot">&lt;-</span> <span class="fu">factor</span>(newdata[,match_idx[v]],</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>                             <span class="at">levels =</span> <span class="fu">colnames</span>(model<span class="sc">$</span>tables[[v]]))</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>      notna <span class="ot">&lt;-</span> <span class="sc">!</span><span class="fu">is.na</span>(nd)</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>      Logprob[,notna] <span class="ot">&lt;-</span>Logprob[,notna]<span class="sc">+</span> <span class="fu">log</span>(model<span class="sc">$</span>tables[[v]][,nd[notna]])</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 5: Add log-priors to the computed log-likelihoods</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  Logprob <span class="ot">&lt;-</span> <span class="fu">sweep</span>(Logprob, <span class="dv">1</span>, logprior, <span class="st">"+"</span>)</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 6: Return predictions based on the specified type ('class' or 'raw')</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (type <span class="sc">==</span> <span class="st">"class"</span>) {</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    pred_classes <span class="ot">&lt;-</span> model<span class="sc">$</span>level[<span class="fu">apply</span>(Logprob,<span class="dv">2</span>,which.max)]</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(pred_classes)</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>    <span class="co"># If type == "raw", return probabilities for all classes</span></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>    probs <span class="ot">&lt;-</span> <span class="fu">exp</span>(Logprob)  <span class="co"># Convert log-probabilities back to normal scale</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Normalize probabilities so they sum to 1</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>    probs <span class="ot">&lt;-</span> <span class="fu">apply</span>(probs,<span class="dv">2</span>,<span class="cf">function</span>(x)x<span class="sc">/</span><span class="fu">sum</span>(x) ) </span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">t</span>(probs))</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
 <section id="function-confusion_matrix-and-roc_auc" class="level2" data-number="3">
 <h2 data-number="3" class="anchored" data-anchor-id="function-confusion_matrix-and-roc_auc"><span class="header-section-number">3</span> Function <code>confusion_matrix</code> and <code>roc_auc</code></h2>
-<p>Two functions that plots the ROC curve for a binary classification model and compute the confusion matrix. The function takes three inputs: the true labels, the output from the prediction function (which typically returns the predicted probabilities), and the name of the class to be considered as the positive class (set to 1).&nbsp;You can customize this function for multi-class classification by applying a ‘one-vs-all’ approach, where the ROC curve is generated for each class by treating it as the positive class and all other classes as the negative class.&nbsp;</p>
+<p>The first function computes the confusion matrix, which compares the true class labels with the predicted class labels to evaluate the performance of the classification model.</p>
+<blockquote class="blockquote">
+<ul>
+<li><p>Input:</p>
+<ul>
+<li><p><code>true_labels</code>: A vector of true class labels for the dataset.</p></li>
+<li><p><code>predicted_class</code>: A vector of predicted class labels for the dataset. This is typically the output after selecting the class with the highest predicted probability for each instance.</p></li>
+</ul></li>
+<li><p>Output:</p>
+<ul>
+<li>A confusion matrix, where rows represent the actual class labels and columns represent the predicted class labels.&nbsp;</li>
+</ul></li>
+</ul>
+</blockquote>
+<p>The second function computes the ROC curve and Area Under the Curve (AUC) for each class in the classification problem.</p>
+<blockquote class="blockquote">
+<ul>
+<li><p>Input: the same as above</p></li>
+<li><p>Output:</p>
+<p>A list containing:</p>
+<ul>
+<li><p><code>roc_data</code>: A data frame with columns FPR (False Positive Rate), TPR (True Positive Rate), and class for each class, representing the ROC curve points for each class.</p></li>
+<li><p><code>auc</code>: A named vector where each entry is the AUC value for one class, with the class names as the vector names.</p></li>
+</ul></li>
+</ul>
+</blockquote>
+<p>While these functions can handle binary classification, they are especially suited for multi-class classification problems. In multi-class classification, the “one-vs-all” (or “one-vs-rest”) approach is applied. This means that for each class, the function treats it as the positive class and considers all other classes as the negative class.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>confusion_matrix <span class="ot">&lt;-</span> <span class="cf">function</span>(true_labels, predicted_probs, class_name,<span class="at">threshold=</span>.<span class="dv">5</span>){</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Convert true labels to binary</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  true_labels <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(true_labels<span class="sc">==</span>class_name,<span class="dv">1</span>,<span class="dv">0</span>)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Classify based on the current threshold</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  predicted_class <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(predicted_probs[,class_name] <span class="sc">&gt;=</span> threshold, <span class="dv">1</span>, <span class="dv">0</span>)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate TP, FP, TN, FN from true labels and predicted classes</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  TP <span class="ot">&lt;-</span> <span class="fu">sum</span>(true_labels <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> predicted_class <span class="sc">==</span> <span class="dv">1</span>)</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  FP <span class="ot">&lt;-</span> <span class="fu">sum</span>(true_labels <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span> predicted_class <span class="sc">==</span> <span class="dv">1</span>)</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  TN <span class="ot">&lt;-</span> <span class="fu">sum</span>(true_labels <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span> predicted_class <span class="sc">==</span> <span class="dv">0</span>)</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  FN <span class="ot">&lt;-</span> <span class="fu">sum</span>(true_labels <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> predicted_class <span class="sc">==</span> <span class="dv">0</span>)</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Return the confusion matrix as a 2x2 matrix</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">matrix</span>(<span class="fu">c</span>(TP, FN, FP, TN), <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>         <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="st">"Actual"</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Positive"</span>, <span class="st">"Negative"</span>),</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Predicted"</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Positive"</span>, <span class="st">"Negative"</span>)))</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>roc_auc <span class="ot">&lt;-</span> <span class="cf">function</span>(true_labels, predicted_probs, class_name) {</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Convert true labels to binary</span></span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  binary_labels <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(true_labels<span class="sc">==</span>class_name,<span class="dv">1</span>,<span class="dv">0</span>)</span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Number of positive examples (M) and negative examples (N)</span></span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  M <span class="ot">&lt;-</span> <span class="fu">sum</span>(binary_labels)</span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  N <span class="ot">&lt;-</span> <span class="fu">length</span>(binary_labels)<span class="sc">-</span>M</span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Extract predicted probabilities</span></span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  pos_prob <span class="ot">&lt;-</span> predicted_probs[,class_name]</span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Internal function to compute TPR and FPR</span></span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  compute_tpr_fpr <span class="ot">&lt;-</span> <span class="cf">function</span>(binary_labels,pos_prob , threshold) {</span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Classify based on the current threshold</span></span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    predicted_class <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(pos_prob <span class="sc">&gt;=</span> threshold, <span class="dv">1</span>, <span class="dv">0</span>)</span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Calculate TP, FP, TN, FN from true labels and predicted classes</span></span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    TP <span class="ot">&lt;-</span> <span class="fu">sum</span>(binary_labels <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> predicted_class <span class="sc">==</span> <span class="dv">1</span>)</span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    FP <span class="ot">&lt;-</span> <span class="fu">sum</span>(binary_labels <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span> predicted_class <span class="sc">==</span> <span class="dv">1</span>)</span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    TN <span class="ot">&lt;-</span> <span class="fu">sum</span>(binary_labels <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span> predicted_class <span class="sc">==</span> <span class="dv">0</span>)</span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    FN <span class="ot">&lt;-</span> <span class="fu">sum</span>(binary_labels <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> predicted_class <span class="sc">==</span> <span class="dv">0</span>)</span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Calculate TPR (True Positive Rate) and FPR (False Positive Rate)</span></span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    TPR <span class="ot">&lt;-</span> TP <span class="sc">/</span> (TP <span class="sc">+</span> FN)  </span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    FPR <span class="ot">&lt;-</span> FP <span class="sc">/</span> (FP <span class="sc">+</span> TN)  </span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>    youden<span class="ot">&lt;-</span> TPR<span class="sc">-</span>FPR</span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>    distance <span class="ot">&lt;-</span> <span class="fu">sqrt</span>((<span class="dv">1</span><span class="sc">-</span>TPR)<span class="sc">^</span><span class="dv">2</span><span class="sc">+</span>FPR<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">c</span>(<span class="st">"TPR"</span><span class="ot">=</span>TPR,<span class="st">"FPR"</span><span class="ot">=</span>FPR,<span class="st">"treshold"</span><span class="ot">=</span>threshold,</span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>             <span class="st">"youden"</span><span class="ot">=</span>youden,<span class="st">"distance"</span><span class="ot">=</span>distance))</span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Define a sequence of threshold values from 0 to 1, with a step of 0.001</span></span>
-<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>  thresholds <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">by =</span> <span class="fl">0.001</span>)</span>
-<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Compute TPR and FPR for each threshold</span></span>
-<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>  roc_data <span class="ot">&lt;-</span> <span class="fu">vapply</span>(thresholds,<span class="cf">function</span>(thresh){</span>
-<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>    <span class="fu">compute_tpr_fpr</span>(binary_labels, pos_prob, thresh)</span>
-<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>  },<span class="fu">numeric</span>(<span class="dv">5</span>))<span class="co"># Specify the result to be length 3 numeric vector</span></span>
-<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate AUC </span></span>
-<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>  auc <span class="ot">&lt;-</span> (<span class="fu">sum</span>(<span class="fu">rank</span>(pos_prob)[binary_labels<span class="sc">==</span><span class="dv">1</span>])<span class="sc">-</span>M<span class="sc">*</span>(M<span class="sc">+</span><span class="dv">1</span>)<span class="sc">/</span><span class="dv">2</span>)<span class="sc">/</span>(M<span class="sc">*</span>N)</span>
-<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Convert to a data frame for easier use</span></span>
-<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>  roc_data <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">t</span>(roc_data))</span>
-<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Find the threshold with the maximum Youden's index </span></span>
-<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>  <span class="co"># and the minimum distance to the (0,1) point</span></span>
-<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>  tresh1 <span class="ot">&lt;-</span> thresholds[<span class="fu">which.max</span>(roc_data<span class="sc">$</span>youden)]</span>
-<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>  tresh2 <span class="ot">&lt;-</span> thresholds[<span class="fu">which.min</span>(roc_data<span class="sc">$</span>distance)]</span>
-<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Compute confusion matrices for these thresholds</span></span>
-<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>  conf_matrix_youden <span class="ot">&lt;-</span> <span class="fu">confusion_matrix</span>(true_labels,predicted_probs,class_name,tresh1)</span>
-<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>  conf_matrix_distance <span class="ot">&lt;-</span> <span class="fu">confusion_matrix</span>(true_labels,predicted_probs,class_name,tresh2)</span>
-<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(roc_data, <span class="fu">aes</span>(<span class="at">x =</span>FPR, <span class="at">y =</span>TPR)) <span class="sc">+</span></span>
-<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>() <span class="sc">+</span>  </span>
-<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_abline</span>(<span class="at">slope =</span> <span class="dv">1</span>,<span class="at">intercept =</span> <span class="dv">0</span>,<span class="at">linetype=</span><span class="st">"dashed"</span>,<span class="at">color=</span><span class="st">"gray"</span>) <span class="sc">+</span> </span>
-<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"False Positive Rate"</span>, <span class="at">y =</span> <span class="st">"True Positive Rate"</span>, </span>
-<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>         <span class="at">title =</span> <span class="st">"ROC Curves"</span>) <span class="sc">+</span> </span>
-<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>()<span class="sc">+</span></span>
-<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Annotate AUC on the plot</span></span>
-<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>    <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="fl">0.7</span>, <span class="at">y =</span> <span class="fl">0.1</span>, </span>
-<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>             <span class="at">label =</span> <span class="fu">paste</span>(<span class="st">"AUC ="</span>, <span class="fu">round</span>(auc, <span class="dv">4</span>)),</span>
-<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>             <span class="at">size =</span> <span class="dv">5</span>, <span class="at">color =</span> <span class="st">"blue"</span>)</span>
-<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(</span>
-<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>    <span class="at">auc =</span> auc,</span>
-<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>    <span class="at">optimal_tresholds =</span> <span class="fu">c</span>(<span class="st">"youden"</span><span class="ot">=</span>tresh1,<span class="st">"distance"</span><span class="ot">=</span>tresh2),</span>
-<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>    <span class="at">confusion_matrix=</span><span class="fu">list</span>(</span>
-<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>      <span class="st">"youden"</span><span class="ot">=</span>conf_matrix_youden,</span>
-<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>      <span class="st">"distance"</span><span class="ot">=</span>conf_matrix_distance),</span>
-<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>    <span class="at">roc_plot =</span> p</span>
-<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>  ))</span>
-<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>} </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to create a confusion matrix based on true labels and predicted class labels</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>confusion_matrix <span class="ot">&lt;-</span> <span class="cf">function</span>(true_labels, predicted_class) {</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  class_names <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">c</span>(true_labels, predicted_class))</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Create an empty confusion matrix</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  conf_matrix <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="at">nrow =</span> <span class="fu">length</span>(class_names), <span class="at">ncol =</span> <span class="fu">length</span>(class_names),</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>                        <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="st">"Actual"</span> <span class="ot">=</span> class_names, <span class="st">"Predicted"</span> <span class="ot">=</span> class_names))</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Populate the confusion matrix</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(true_labels)) {</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    true_class <span class="ot">&lt;-</span> true_labels[i]</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    pred_class <span class="ot">&lt;-</span> predicted_class[i]</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    conf_matrix[true_class, pred_class] <span class="ot">&lt;-</span> conf_matrix[true_class, pred_class] <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(conf_matrix)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>roc_auc <span class="ot">&lt;-</span> <span class="cf">function</span>(true_labels, predicted_probs) {</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Get unique class names</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  classes <span class="ot">&lt;-</span> <span class="fu">colnames</span>(predicted_probs)</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Internal function to compute sensitivity and specificity with vectorized operations</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  compute_roc_auc <span class="ot">&lt;-</span> <span class="cf">function</span>(binary_labels, pos_prob) {</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Sort the predicted probabilities and corresponding labels once</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    order_index <span class="ot">&lt;-</span> <span class="fu">order</span>(pos_prob, <span class="at">decreasing =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    sorted_labels <span class="ot">&lt;-</span> binary_labels[order_index]</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Number of positive and negative samples</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    M <span class="ot">&lt;-</span> <span class="fu">sum</span>(sorted_labels <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    N <span class="ot">&lt;-</span> <span class="fu">sum</span>(sorted_labels <span class="sc">==</span> <span class="dv">0</span>)</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Cumulative sum to calculate sensitivity (sen) and specificity (spe)</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    sen <span class="ot">&lt;-</span> <span class="fu">cumsum</span>(sorted_labels <span class="sc">==</span> <span class="dv">1</span>)  <span class="co"># True positives as we go down the list</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    spe <span class="ot">&lt;-</span> <span class="fu">cumsum</span>(sorted_labels <span class="sc">==</span> <span class="dv">0</span>)  <span class="co"># False positives as we go down the list</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Sensitivity and specificity as ratios</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>    TPR <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, sen <span class="sc">/</span> M)</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    FPR <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, spe <span class="sc">/</span> N)</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Calculate AUC using the trapezoidal rule (efficiently using vectorized operations)</span></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>    auc <span class="ot">&lt;-</span> <span class="fu">sum</span>((FPR[<span class="sc">-</span><span class="dv">1</span>] <span class="sc">-</span> FPR[<span class="sc">-</span><span class="fu">length</span>(FPR)]) <span class="sc">*</span> (TPR[<span class="sc">-</span><span class="dv">1</span>] <span class="sc">+</span> TPR[<span class="sc">-</span><span class="fu">length</span>(TPR)])) <span class="sc">/</span> <span class="dv">2</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Return results as a matrix for better performance</span></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">roc =</span> <span class="fu">data.frame</span>(<span class="at">FPR =</span> FPR, <span class="at">TPR =</span> TPR), <span class="at">auc =</span> auc))</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Check if it's a binary classification problem</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">length</span>(classes) <span class="sc">==</span> <span class="dv">2</span>) {</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>    class_name <span class="ot">&lt;-</span> classes[<span class="dv">1</span>]</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>    binary_labels <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(true_labels <span class="sc">==</span> class_name, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>    pos_prob <span class="ot">&lt;-</span> predicted_probs[, class_name]</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Compute ROC for the binary classification</span></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>    roc_auc_result <span class="ot">&lt;-</span> <span class="fu">compute_roc_auc</span>(binary_labels, pos_prob)</span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>    roc_data <span class="ot">&lt;-</span> roc_auc_result<span class="sc">$</span>roc</span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>    roc_data<span class="sc">$</span>class <span class="ot">&lt;-</span> class_name  <span class="co"># Add class column</span></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>    auc <span class="ot">&lt;-</span> <span class="fu">setNames</span>(roc_auc_result<span class="sc">$</span>auc, class_name)  <span class="co"># Return AUC as named vector</span></span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>    <span class="co"># For multi-class classification, use one-vs-all approach</span></span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>    roc_data_list <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>    auc <span class="ot">&lt;-</span> <span class="fu">setNames</span>(<span class="fu">rep</span>(<span class="cn">NA</span>, <span class="fu">length</span>(classes)), classes)  <span class="co"># Initialize a named vector for AUC</span></span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Loop through each class and calculate sensitivity and specificity</span></span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (class_name <span class="cf">in</span> classes) {</span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>      binary_labels <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(true_labels <span class="sc">==</span> class_name, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>      pos_prob <span class="ot">&lt;-</span> predicted_probs[, class_name]</span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Compute ROC for the current class</span></span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>      class_roc_auc_result <span class="ot">&lt;-</span> <span class="fu">compute_roc_auc</span>(binary_labels, pos_prob)</span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>      class_roc_data <span class="ot">&lt;-</span> class_roc_auc_result<span class="sc">$</span>roc</span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>      class_roc_data<span class="sc">$</span>class <span class="ot">&lt;-</span> class_name  <span class="co"># Add class column</span></span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Store ROC data and AUC for the current class</span></span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>      roc_data_list[[class_name]] <span class="ot">&lt;-</span> class_roc_data</span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>      auc[class_name] <span class="ot">&lt;-</span> class_roc_auc_result<span class="sc">$</span>auc  <span class="co"># Assign AUC to the named vector</span></span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Combine ROC results for all classes into a single data frame</span></span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>    roc_data <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, roc_data_list)</span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>  result <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">roc_data =</span> roc_data, <span class="at">auc =</span> auc)</span>
+<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a>  <span class="fu">class</span>(result) <span class="ot">&lt;-</span> <span class="st">"roc_auc"</span></span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(result)</span>
+<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
-<section id="a-real-example" class="level2" data-number="4">
-<h2 data-number="4" class="anchored" data-anchor-id="a-real-example"><span class="header-section-number">4</span> A real example</h2>
-<p>Apply the Naive Bayes classifier to the adult dataset for classification. The data can be found in <a href="https://github.com/CreoHsia/myblog/tree/main/posts/Naive%20bayes%20model">Github</a></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"adult.data"</span>,</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">na.strings =</span> <span class="st">" ?"</span>, <span class="at">header=</span><span class="cn">FALSE</span>)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>newdata <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="st">"adult.test"</span>,</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>                      <span class="at">sep=</span><span class="st">","</span>, <span class="at">skip =</span> <span class="dv">1</span>,<span class="at">na.strings =</span> <span class="st">" ?"</span>)</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>newdata<span class="sc">$</span>V15 <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">.$"</span>, <span class="st">""</span>, newdata<span class="sc">$</span>V15)</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>({</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  model <span class="ot">&lt;-</span> <span class="fu">naiveBayes</span>(data,<span class="st">"V15"</span>,<span class="at">alpha =</span> <span class="dv">1</span>)</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(model,newdata,<span class="st">"raw"</span>)  </span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  roc <span class="ot">&lt;-</span> <span class="fu">roc_auc</span>(newdata<span class="sc">$</span>V15,pred,<span class="st">" &lt;=50K"</span>)</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    user  system elapsed </span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   1.754   0.074   1.828</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>roc<span class="sc">$</span>optimal_tresholds</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   youden distance </span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    0.985    0.971</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>roc<span class="sc">$</span>confusion_matrix</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $youden</span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;           Predicted</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Actual     Positive Negative</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   Positive     9278     3157</span></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   Negative      470     3376</span></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $distance</span></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;           Predicted</span></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Actual     Positive Negative</span></span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   Positive     9832     2603</span></span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   Negative      657     3189</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
+<section id="function-plot.roc_auc" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="function-plot.roc_auc"><span class="header-section-number">4</span> Function <code>plot.roc_auc</code></h2>
+<p>A <code>ggplot2</code> plot displaying the ROC curves for all classes. Each class is represented by a different color, and the AUC values are shown on the plot to summarize the classifier’s performance for each class.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>roc<span class="sc">$</span>roc_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>plot.roc_auc <span class="ot">&lt;-</span> <span class="cf">function</span>(x, ...) {</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Extract ROC data and AUC values</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  roc_data <span class="ot">&lt;-</span> x<span class="sc">$</span>roc_data</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  auc_values <span class="ot">&lt;-</span> x<span class="sc">$</span>auc</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Create a data frame for AUC values to annotate</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  auc_annotations <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">class =</span> <span class="fu">names</span>(auc_values),</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">auc =</span> <span class="fu">round</span>(auc_values, <span class="dv">4</span>),</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">label =</span> <span class="fu">paste</span>(<span class="fu">names</span>(auc_values), <span class="st">": "</span>, <span class="fu">round</span>(auc_values, <span class="dv">4</span>), <span class="at">sep =</span> <span class="st">""</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Plot all ROC curves, using different colors for each class</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(roc_data, <span class="fu">aes</span>(<span class="at">x =</span> FPR, <span class="at">y =</span> TPR, <span class="at">color =</span> class)) <span class="sc">+</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_abline</span>(<span class="at">slope =</span> <span class="dv">1</span>, <span class="at">intercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"gray"</span>) <span class="sc">+</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"ROC Curves for All Classes"</span>,</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>         <span class="at">x =</span> <span class="st">"False Positive Rate"</span>, <span class="at">y =</span> <span class="st">"True Positive Rate"</span>) <span class="sc">+</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>()</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Annotate AUC values at the top-right corner without any box or frame</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  auc_text <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="st">"AUC:</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">paste</span>(auc_annotations<span class="sc">$</span>label, <span class="at">collapse =</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>))</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> p <span class="sc">+</span> <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="fl">0.8</span>, <span class="at">y =</span> <span class="fl">0.6</span>, <span class="at">hjust =</span> <span class="dv">0</span>,</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>                    <span class="at">label =</span> auc_text, <span class="at">size =</span> <span class="dv">3</span>, <span class="at">color =</span> <span class="st">"black"</span>)</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Display the plot</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(p)</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+</div>
+</section>
+<section id="a-real-example" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="a-real-example"><span class="header-section-number">5</span> A real example</h2>
+<p>we apply the custom Naive Bayes classifier that we implemented to the Adult dataset (The data can be found in <a href="https://github.com/CreoHsia/myblog/tree/main/posts/Naive%20bayes%20model">Github</a>) for classification. We also compare its performance in terms of speed with the naiveBayes function from the e1071 R package.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"adult.data"</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">na.strings =</span> <span class="st">" ?"</span>, <span class="at">header=</span><span class="cn">FALSE</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>newdata <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="st">"adult.test"</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>                      <span class="at">sep=</span><span class="st">","</span>, <span class="at">skip =</span> <span class="dv">1</span>,<span class="at">na.strings =</span> <span class="st">" ?"</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>newdata<span class="sc">$</span>V15 <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">.$"</span>, <span class="st">""</span>, newdata<span class="sc">$</span>V15)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>({</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  model <span class="ot">&lt;-</span> <span class="fu">Bayesclasifier</span>(data,<span class="st">"V15"</span>,<span class="at">alpha =</span> <span class="dv">1</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(model,newdata,<span class="st">"raw"</span>)  </span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  roc <span class="ot">&lt;-</span> <span class="fu">roc_auc</span>(newdata<span class="sc">$</span>V15,pred)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    user  system elapsed </span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   0.163   0.005   0.168</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(e1071)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>({</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  model2 <span class="ot">&lt;-</span> e1071<span class="sc">::</span><span class="fu">naiveBayes</span>(V15<span class="sc">~</span>.,<span class="at">data=</span>data)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  pred2 <span class="ot">&lt;-</span> <span class="fu">predict</span>(model2,newdata)</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    user  system elapsed </span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   1.350   0.010   1.363</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Faster than the function in <code>e1071</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confusion_matrix</span>(newdata<span class="sc">$</span>V15,pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(model,newdata,<span class="st">"class"</span>))</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Predicted</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Actual    &lt;=50K  &gt;50K</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;=50K  11547   888</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &gt;50K    1863  1983</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(roc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Naive-bayes-model_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Naive-bayes-model_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
+</section>
+<section id="function-print.naivebayes_clasifier" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="function-print.naivebayes_clasifier"><span class="header-section-number">6</span> Function <code>print.naiveBayes_clasifier</code></h2>
 <p>This function prints a summary of the fitted model, including the prior probabilities, the conditional probabilities for each variable, and an indication of whether each variable is numeric or categorical.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>print.naiveBayes <span class="ot">&lt;-</span> <span class="cf">function</span>(model) {</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Naive Bayes Model</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"=================</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Print class levels</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Class Levels:</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(model<span class="sc">$</span>level)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Print prior probabilities</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Prior Probabilities:</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(model<span class="sc">$</span>prior)</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Loop through the model tables to display statistics for each feature</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Feature Statistics:</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(model<span class="sc">$</span>tables)) {</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    feature_name <span class="ot">&lt;-</span> <span class="fu">names</span>(model<span class="sc">$</span>tables)[i]</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Feature:"</span>, feature_name, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (model<span class="sc">$</span>isnumeric[i]) {</span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>      <span class="co"># For numeric features, print mean and standard deviation</span></span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cat</span>(<span class="st">"Type: Numeric</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>      stats <span class="ot">&lt;-</span> model<span class="sc">$</span>tables[[i]]</span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>      <span class="fu">print</span>(<span class="fu">data.frame</span>(</span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>        <span class="at">Mean =</span> stats[, <span class="dv">1</span>], <span class="at">SD =</span> stats[, <span class="dv">2</span>]))</span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>      <span class="co"># For categorical features, print conditional probabilities</span></span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cat</span>(<span class="st">"Type: Categorical</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>      probs <span class="ot">&lt;-</span> model<span class="sc">$</span>tables[[i]]</span>
-<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>      <span class="fu">print</span>(<span class="fu">as.data.frame.matrix</span>(probs))</span>
-<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">=================</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>print.naiveBayes_clasifier <span class="ot">&lt;-</span> <span class="cf">function</span>(model) {</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Naive Bayes Model</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"=================</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Print class levels</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Class Levels:</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(model<span class="sc">$</span>level)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Print prior probabilities</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Prior Probabilities:</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(model<span class="sc">$</span>prior)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Loop through the model tables to display statistics for each feature</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Feature Statistics:</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(model<span class="sc">$</span>tables)) {</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    feature_name <span class="ot">&lt;-</span> <span class="fu">names</span>(model<span class="sc">$</span>tables)[i]</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Feature:"</span>, feature_name, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (model<span class="sc">$</span>isnumeric[i]) {</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>      <span class="co"># For numeric features, print mean and standard deviation</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cat</span>(<span class="st">"Type: Numeric</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>      stats <span class="ot">&lt;-</span> model<span class="sc">$</span>tables[[i]]</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>      <span class="fu">print</span>(<span class="fu">data.frame</span>(</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>        <span class="at">Mean =</span> stats[, <span class="dv">1</span>], <span class="at">SD =</span> stats[, <span class="dv">2</span>]))</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>      <span class="co"># For categorical features, print conditional probabilities</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cat</span>(<span class="st">"Type: Categorical</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>      probs <span class="ot">&lt;-</span> model<span class="sc">$</span>tables[[i]]</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>      <span class="fu">print</span>(<span class="fu">as.data.frame.matrix</span>(probs))</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">=================</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(model)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Naive Bayes Model</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =================</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Class Levels:</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] " &lt;=50K" " &gt;50K" </span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Prior Probabilities:</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; label</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     &lt;=50K      &gt;50K </span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0.7591904 0.2408096 </span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature Statistics:</span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V1 </span></span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Numeric</span></span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            Mean       SD</span></span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 36.78374 14.02009</span></span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  44.24984 10.51903</span></span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V2 </span></span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Categorical</span></span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Federal-gov  Local-gov  Never-worked  Private  Self-emp-inc</span></span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K   0.02555994 0.06398648  0.0003465754 0.768271    0.02144435</span></span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K    0.04857665 0.08069992  0.0001305824 0.648211    0.08135283</span></span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Self-emp-not-inc  State-gov  Without-pay</span></span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K        0.07875926 0.04098254 0.0006498289</span></span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K         0.09467224 0.04622617 0.0001305824</span></span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V3 </span></span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Numeric</span></span>
-<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            Mean       SD</span></span>
-<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 190340.9 106482.3</span></span>
-<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  188005.0 102541.8</span></span>
-<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V4 </span></span>
-<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Categorical</span></span>
-<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               10th        11th        12th      1st-4th     5th-6th     7th-8th</span></span>
-<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.035252264 0.045116429 0.016211190 0.0065895860 0.012855757 0.024539133</span></span>
-<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.008018328 0.007763778 0.004327351 0.0008909253 0.002163676 0.005218277</span></span>
-<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                9th  Assoc-acdm  Assoc-voc  Bachelors   Doctorate   HS-grad</span></span>
-<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.019728331  0.03246281 0.04131630  0.1267384 0.004366106 0.3568483</span></span>
-<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.003563701  0.03385516 0.04607356  0.2828051 0.039073438 0.2133130</span></span>
-<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;           Masters   Preschool  Prof-school  Some-college</span></span>
-<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.03092658 0.002102199  0.006225744     0.2387209</span></span>
-<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.12218404 0.000127275  0.053964618     0.1766578</span></span>
-<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V5 </span></span>
-<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Numeric</span></span>
-<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             Mean       SD</span></span>
-<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K  9.595065 2.436147</span></span>
-<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  11.611657 2.385129</span></span>
-<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V6 </span></span>
-<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Categorical</span></span>
-<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          Divorced  Married-AF-spouse  Married-civ-spouse  Married-spouse-absent</span></span>
-<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.16099810       0.0005661827           0.3350588            0.015570025</span></span>
-<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.05912334       0.0014016310           0.8528287            0.004459735</span></span>
-<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Never-married   Separated    Widowed</span></span>
-<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K     0.41222146 0.038823958 0.03676143</span></span>
-<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K      0.06269113 0.008537207 0.01095821</span></span>
-<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V7 </span></span>
-<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Categorical</span></span>
-<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Adm-clerical  Armed-Forces  Craft-repair  Exec-managerial</span></span>
-<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K    0.14140889  0.0003899142     0.1373798       0.09093666</span></span>
-<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K     0.06628392  0.0002609603     0.1213466       0.25691545</span></span>
-<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Farming-fishing  Handlers-cleaners  Machine-op-inspct  Other-service</span></span>
-<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K       0.03812495         0.05567109         0.07594663     0.13685989</span></span>
-<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K        0.01513570         0.01135177         0.03275052     0.01800626</span></span>
-<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Priv-house-serv  Prof-specialty  Protective-serv     Sales</span></span>
-<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K     0.0064552465      0.09886492       0.01901915 0.1155879</span></span>
-<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K      0.0002609603      0.24269311       0.02766180 0.1283925</span></span>
-<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Tech-support  Transport-moving</span></span>
-<span id="cb7-75"><a href="#cb7-75" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K    0.02798718        0.05536782</span></span>
-<span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K     0.03705637        0.04188413</span></span>
-<span id="cb7-77"><a href="#cb7-77" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb7-78"><a href="#cb7-78" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V8 </span></span>
-<span id="cb7-79"><a href="#cb7-79" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Categorical</span></span>
-<span id="cb7-80"><a href="#cb7-80" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          Husband  Not-in-family  Other-relative   Own-child  Unmarried</span></span>
-<span id="cb7-81"><a href="#cb7-81" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.2942651      0.3013023     0.038218879 0.202297177 0.13059128</span></span>
-<span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.7543010      0.1092137     0.004842615 0.008665732 0.02790875</span></span>
-<span id="cb7-83"><a href="#cb7-83" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;              Wife</span></span>
-<span id="cb7-84"><a href="#cb7-84" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.03332524</span></span>
-<span id="cb7-85"><a href="#cb7-85" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.09506818</span></span>
-<span id="cb7-86"><a href="#cb7-86" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb7-87"><a href="#cb7-87" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V9 </span></span>
-<span id="cb7-88"><a href="#cb7-88" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Categorical</span></span>
-<span id="cb7-89"><a href="#cb7-89" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Amer-Indian-Eskimo  Asian-Pac-Islander      Black       Other     White</span></span>
-<span id="cb7-90"><a href="#cb7-90" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K         0.011162791          0.03089990 0.11073812 0.009989889 0.8372093</span></span>
-<span id="cb7-91"><a href="#cb7-91" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K          0.004715779          0.03530461 0.04945195 0.003313790 0.9072139</span></span>
-<span id="cb7-92"><a href="#cb7-92" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb7-93"><a href="#cb7-93" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V10 </span></span>
-<span id="cb7-94"><a href="#cb7-94" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Categorical</span></span>
-<span id="cb7-95"><a href="#cb7-95" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;           Female      Male</span></span>
-<span id="cb7-96"><a href="#cb7-96" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.3880349 0.6119651</span></span>
-<span id="cb7-97"><a href="#cb7-97" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.1504526 0.8495474</span></span>
-<span id="cb7-98"><a href="#cb7-98" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb7-99"><a href="#cb7-99" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V11 </span></span>
-<span id="cb7-100"><a href="#cb7-100" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Numeric</span></span>
-<span id="cb7-101"><a href="#cb7-101" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             Mean         SD</span></span>
-<span id="cb7-102"><a href="#cb7-102" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K  148.7525   963.1393</span></span>
-<span id="cb7-103"><a href="#cb7-103" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  4006.1425 14570.3790</span></span>
-<span id="cb7-104"><a href="#cb7-104" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb7-105"><a href="#cb7-105" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V12 </span></span>
-<span id="cb7-106"><a href="#cb7-106" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Numeric</span></span>
-<span id="cb7-107"><a href="#cb7-107" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             Mean       SD</span></span>
-<span id="cb7-108"><a href="#cb7-108" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K  53.14292 310.7558</span></span>
-<span id="cb7-109"><a href="#cb7-109" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  195.00153 595.4876</span></span>
-<span id="cb7-110"><a href="#cb7-110" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb7-111"><a href="#cb7-111" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V13 </span></span>
-<span id="cb7-112"><a href="#cb7-112" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Numeric</span></span>
-<span id="cb7-113"><a href="#cb7-113" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            Mean       SD</span></span>
-<span id="cb7-114"><a href="#cb7-114" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 38.84021 12.31899</span></span>
-<span id="cb7-115"><a href="#cb7-115" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  45.47303 11.01297</span></span>
-<span id="cb7-116"><a href="#cb7-116" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb7-117"><a href="#cb7-117" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V14 </span></span>
-<span id="cb7-118"><a href="#cb7-118" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Categorical</span></span>
-<span id="cb7-119"><a href="#cb7-119" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            Cambodia      Canada       China     Columbia        Cuba</span></span>
-<span id="cb7-120"><a href="#cb7-120" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.0005344516 0.003412268 0.002302253 0.0023844762 0.002918928</span></span>
-<span id="cb7-121"><a href="#cb7-121" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.0010341262 0.005170631 0.002714581 0.0003877973 0.003360910</span></span>
-<span id="cb7-122"><a href="#cb7-122" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Dominican-Republic      Ecuador  El-Salvador     England       France</span></span>
-<span id="cb7-123"><a href="#cb7-123" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K        0.0028367045 0.0010277915  0.004028943 0.002507811 0.0007400099</span></span>
-<span id="cb7-124"><a href="#cb7-124" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K         0.0003877973 0.0006463289  0.001292658 0.004007239 0.0016804550</span></span>
-<span id="cb7-125"><a href="#cb7-125" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            Germany       Greece    Guatemala        Haiti  Holand-Netherlands</span></span>
-<span id="cb7-126"><a href="#cb7-126" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.003864496 0.0009044565 0.0025489229 0.0016855780        8.222332e-05</span></span>
-<span id="cb7-127"><a href="#cb7-127" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.005816960 0.0011633919 0.0005170631 0.0006463289        1.292658e-04</span></span>
-<span id="cb7-128"><a href="#cb7-128" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            Honduras         Hong      Hungary       India        Iran</span></span>
-<span id="cb7-129"><a href="#cb7-129" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.0005344516 0.0006166749 0.0004522283 0.002507811 0.001068903</span></span>
-<span id="cb7-130"><a href="#cb7-130" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.0002585315 0.0009048604 0.0005170631 0.005299897 0.002456050</span></span>
-<span id="cb7-131"><a href="#cb7-131" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             Ireland       Italy     Jamaica       Japan         Laos</span></span>
-<span id="cb7-132"><a href="#cb7-132" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.0008222332 0.002014471 0.002960039 0.001603355 0.0006988982</span></span>
-<span id="cb7-133"><a href="#cb7-133" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.0007755946 0.003360910 0.001421923 0.003231644 0.0003877973</span></span>
-<span id="cb7-134"><a href="#cb7-134" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             Mexico    Nicaragua  Outlying-US(Guam-USVI-etc)         Peru</span></span>
-<span id="cb7-135"><a href="#cb7-135" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.025119224 0.0013566848                0.0006166749 0.0012333498</span></span>
-<span id="cb7-136"><a href="#cb7-136" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.004395036 0.0003877973                0.0001292658 0.0003877973</span></span>
-<span id="cb7-137"><a href="#cb7-137" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Philippines      Poland     Portugal  Puerto-Rico     Scotland</span></span>
-<span id="cb7-138"><a href="#cb7-138" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K  0.005673409 0.002014471 0.0013977964  0.004234501 0.0004111166</span></span>
-<span id="cb7-139"><a href="#cb7-139" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K   0.008014478 0.001680455 0.0006463289  0.001680455 0.0005170631</span></span>
-<span id="cb7-140"><a href="#cb7-140" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;              South      Taiwan     Thailand  Trinadad&amp;Tobago  United-States</span></span>
-<span id="cb7-141"><a href="#cb7-141" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.002672258 0.001315573 0.0006577865     0.0007400099      0.9044565</span></span>
-<span id="cb7-142"><a href="#cb7-142" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.002197518 0.002714581 0.0005170631     0.0003877973      0.9270941</span></span>
-<span id="cb7-143"><a href="#cb7-143" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             Vietnam   Yugoslavia</span></span>
-<span id="cb7-144"><a href="#cb7-144" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.0025900345 0.0004522283</span></span>
-<span id="cb7-145"><a href="#cb7-145" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.0007755946 0.0009048604</span></span>
-<span id="cb7-146"><a href="#cb7-146" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb7-147"><a href="#cb7-147" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =================</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(model)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Naive Bayes Model</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =================</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Class Levels:</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] " &lt;=50K" " &gt;50K" </span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Prior Probabilities:</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; label</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     &lt;=50K      &gt;50K </span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0.7591904 0.2408096 </span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature Statistics:</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V1 </span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Numeric</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            Mean       SD</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 36.78374 14.02009</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  44.24984 10.51903</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V2 </span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Categorical</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Federal-gov  Local-gov  Never-worked   Private  Self-emp-inc</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K   0.02385959 0.05972986  0.0003235199 0.7171627    0.02001779</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K    0.04739457 0.07873614  0.0001274048 0.6324373    0.07937317</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Self-emp-not-inc  State-gov  Without-pay</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K        0.07351990 0.03825623 0.0006065998</span></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K         0.09236845 0.04510129 0.0001274048</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V3 </span></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Numeric</span></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            Mean       SD</span></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 190340.9 106482.3</span></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  188005.0 102541.8</span></span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V4 </span></span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Categorical</span></span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               10th        11th        12th      1st-4th     5th-6th     7th-8th</span></span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.035252264 0.045116429 0.016211190 0.0065895860 0.012855757 0.024539133</span></span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.008018328 0.007763778 0.004327351 0.0008909253 0.002163676 0.005218277</span></span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                9th  Assoc-acdm  Assoc-voc  Bachelors   Doctorate   HS-grad</span></span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.019728331  0.03246281 0.04131630  0.1267384 0.004366106 0.3568483</span></span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.003563701  0.03385516 0.04607356  0.2828051 0.039073438 0.2133130</span></span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;           Masters   Preschool  Prof-school  Some-college</span></span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.03092658 0.002102199  0.006225744     0.2387209</span></span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.12218404 0.000127275  0.053964618     0.1766578</span></span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V5 </span></span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Numeric</span></span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             Mean       SD</span></span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K  9.595065 2.436147</span></span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  11.611657 2.385129</span></span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V6 </span></span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Categorical</span></span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          Divorced  Married-AF-spouse  Married-civ-spouse  Married-spouse-absent</span></span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.16099810       0.0005661827           0.3350588            0.015570025</span></span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.05912334       0.0014016310           0.8528287            0.004459735</span></span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Never-married   Separated    Widowed</span></span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K     0.41222146 0.038823958 0.03676143</span></span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K      0.06269113 0.008537207 0.01095821</span></span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V7 </span></span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Categorical</span></span>
+<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Adm-clerical  Armed-Forces  Craft-repair  Exec-managerial</span></span>
+<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K    0.13196410  0.0003638716     0.1282041       0.08486294</span></span>
+<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K     0.06467218  0.0002546149     0.1183959       0.25066836</span></span>
+<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Farming-fishing  Handlers-cleaners  Machine-op-inspct  Other-service</span></span>
+<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K       0.03557856         0.05195278         0.07087410     0.12771893</span></span>
+<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K        0.01476766         0.01107575         0.03195417     0.01756843</span></span>
+<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Priv-house-serv  Prof-specialty  Protective-serv     Sales</span></span>
+<span id="cb8-72"><a href="#cb8-72" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K     0.0060240964      0.09226166       0.01774885 0.1078677</span></span>
+<span id="cb8-73"><a href="#cb8-73" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K      0.0002546149      0.23679185       0.02698918 0.1252705</span></span>
+<span id="cb8-74"><a href="#cb8-74" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Tech-support  Transport-moving</span></span>
+<span id="cb8-75"><a href="#cb8-75" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K    0.02611789        0.05166977</span></span>
+<span id="cb8-76"><a href="#cb8-76" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K     0.03615532        0.04086569</span></span>
+<span id="cb8-77"><a href="#cb8-77" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-78"><a href="#cb8-78" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V8 </span></span>
+<span id="cb8-79"><a href="#cb8-79" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Categorical</span></span>
+<span id="cb8-80"><a href="#cb8-80" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          Husband  Not-in-family  Other-relative   Own-child  Unmarried</span></span>
+<span id="cb8-81"><a href="#cb8-81" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.2942651      0.3013023     0.038218879 0.202297177 0.13059128</span></span>
+<span id="cb8-82"><a href="#cb8-82" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.7543010      0.1092137     0.004842615 0.008665732 0.02790875</span></span>
+<span id="cb8-83"><a href="#cb8-83" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;              Wife</span></span>
+<span id="cb8-84"><a href="#cb8-84" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.03332524</span></span>
+<span id="cb8-85"><a href="#cb8-85" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.09506818</span></span>
+<span id="cb8-86"><a href="#cb8-86" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-87"><a href="#cb8-87" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V9 </span></span>
+<span id="cb8-88"><a href="#cb8-88" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Categorical</span></span>
+<span id="cb8-89"><a href="#cb8-89" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Amer-Indian-Eskimo  Asian-Pac-Islander      Black       Other     White</span></span>
+<span id="cb8-90"><a href="#cb8-90" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K         0.011162791          0.03089990 0.11073812 0.009989889 0.8372093</span></span>
+<span id="cb8-91"><a href="#cb8-91" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K          0.004715779          0.03530461 0.04945195 0.003313790 0.9072139</span></span>
+<span id="cb8-92"><a href="#cb8-92" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-93"><a href="#cb8-93" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V10 </span></span>
+<span id="cb8-94"><a href="#cb8-94" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Categorical</span></span>
+<span id="cb8-95"><a href="#cb8-95" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;           Female      Male</span></span>
+<span id="cb8-96"><a href="#cb8-96" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.3880349 0.6119651</span></span>
+<span id="cb8-97"><a href="#cb8-97" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.1504526 0.8495474</span></span>
+<span id="cb8-98"><a href="#cb8-98" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-99"><a href="#cb8-99" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V11 </span></span>
+<span id="cb8-100"><a href="#cb8-100" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Numeric</span></span>
+<span id="cb8-101"><a href="#cb8-101" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             Mean         SD</span></span>
+<span id="cb8-102"><a href="#cb8-102" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K  148.7525   963.1393</span></span>
+<span id="cb8-103"><a href="#cb8-103" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  4006.1425 14570.3790</span></span>
+<span id="cb8-104"><a href="#cb8-104" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-105"><a href="#cb8-105" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V12 </span></span>
+<span id="cb8-106"><a href="#cb8-106" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Numeric</span></span>
+<span id="cb8-107"><a href="#cb8-107" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             Mean       SD</span></span>
+<span id="cb8-108"><a href="#cb8-108" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K  53.14292 310.7558</span></span>
+<span id="cb8-109"><a href="#cb8-109" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  195.00153 595.4876</span></span>
+<span id="cb8-110"><a href="#cb8-110" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-111"><a href="#cb8-111" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V13 </span></span>
+<span id="cb8-112"><a href="#cb8-112" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Numeric</span></span>
+<span id="cb8-113"><a href="#cb8-113" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            Mean       SD</span></span>
+<span id="cb8-114"><a href="#cb8-114" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 38.84021 12.31899</span></span>
+<span id="cb8-115"><a href="#cb8-115" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  45.47303 11.01297</span></span>
+<span id="cb8-116"><a href="#cb8-116" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-117"><a href="#cb8-117" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V14 </span></span>
+<span id="cb8-118"><a href="#cb8-118" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Categorical</span></span>
+<span id="cb8-119"><a href="#cb8-119" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            Cambodia      Canada       China     Columbia        Cuba</span></span>
+<span id="cb8-120"><a href="#cb8-120" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.0005250192 0.003352046 0.002261621 0.0023423933 0.002867412</span></span>
+<span id="cb8-121"><a href="#cb8-121" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.0010149708 0.005074854 0.002664298 0.0003806141 0.003298655</span></span>
+<span id="cb8-122"><a href="#cb8-122" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Dominican-Republic      Ecuador  El-Salvador     England       France</span></span>
+<span id="cb8-123"><a href="#cb8-123" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K        0.0027866403 0.0010096523  0.003957837 0.002463552 0.0007269496</span></span>
+<span id="cb8-124"><a href="#cb8-124" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K         0.0003806141 0.0006343568  0.001268714 0.003933012 0.0016493276</span></span>
+<span id="cb8-125"><a href="#cb8-125" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            Germany      Greece    Guatemala        Haiti  Holand-Netherlands</span></span>
+<span id="cb8-126"><a href="#cb8-126" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.003796293 0.000888494 0.0025039376 0.0016558297        8.077218e-05</span></span>
+<span id="cb8-127"><a href="#cb8-127" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.005709211 0.001141842 0.0005074854 0.0006343568        1.268714e-04</span></span>
+<span id="cb8-128"><a href="#cb8-128" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            Honduras         Hong      Hungary       India        Iran</span></span>
+<span id="cb8-129"><a href="#cb8-129" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.0005250192 0.0006057914 0.0004442470 0.002463552 0.001050038</span></span>
+<span id="cb8-130"><a href="#cb8-130" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.0002537427 0.0008880995 0.0005074854 0.005201725 0.002410556</span></span>
+<span id="cb8-131"><a href="#cb8-131" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             Ireland       Italy     Jamaica       Japan         Laos</span></span>
+<span id="cb8-132"><a href="#cb8-132" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.0008077218 0.001978918 0.002907799 0.001575058 0.0006865635</span></span>
+<span id="cb8-133"><a href="#cb8-133" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.0007612281 0.003298655 0.001395585 0.003171784 0.0003806141</span></span>
+<span id="cb8-134"><a href="#cb8-134" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             Mexico    Nicaragua  Outlying-US(Guam-USVI-etc)         Peru</span></span>
+<span id="cb8-135"><a href="#cb8-135" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.024675902 0.0013327410                0.0006057914 0.0012115827</span></span>
+<span id="cb8-136"><a href="#cb8-136" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.004313626 0.0003806141                0.0001268714 0.0003806141</span></span>
+<span id="cb8-137"><a href="#cb8-137" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Philippines      Poland     Portugal  Puerto-Rico     Scotland</span></span>
+<span id="cb8-138"><a href="#cb8-138" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K  0.005573281 0.001978918 0.0013731271  0.004159767 0.0004038609</span></span>
+<span id="cb8-139"><a href="#cb8-139" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K   0.007866024 0.001649328 0.0006343568  0.001649328 0.0005074854</span></span>
+<span id="cb8-140"><a href="#cb8-140" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;              South      Taiwan     Thailand  Trinadad&amp;Tobago  United-States</span></span>
+<span id="cb8-141"><a href="#cb8-141" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.002625096 0.001292355 0.0006461775     0.0007269496      0.8884940</span></span>
+<span id="cb8-142"><a href="#cb8-142" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.002156813 0.002664298 0.0005074854     0.0003806141      0.9099213</span></span>
+<span id="cb8-143"><a href="#cb8-143" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             Vietnam   Yugoslavia</span></span>
+<span id="cb8-144"><a href="#cb8-144" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.0025443237 0.0004442470</span></span>
+<span id="cb8-145"><a href="#cb8-145" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.0007612281 0.0008880995</span></span>
+<span id="cb8-146"><a href="#cb8-146" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-147"><a href="#cb8-147" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =================</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+</div>
+</section>
+<section id="supervisor-provided-r-code-for-naive-bayes-classifier" class="level2" data-number="7">
+<h2 data-number="7" class="anchored" data-anchor-id="supervisor-provided-r-code-for-naive-bayes-classifier"><span class="header-section-number">7</span> Supervisor-provided R code for Naive Bayes Classifier</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>ptm <span class="ot">&lt;-</span> <span class="fu">proc.time</span>()</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="do">#### read training and tesing</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>D <span class="ot">=</span> <span class="fu">read.table</span>(<span class="st">"adult.data"</span>,<span class="at">sep=</span><span class="st">","</span>,<span class="at">stringsAsFactors =</span> F)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>Dt <span class="ot">=</span> <span class="fu">read.table</span>(<span class="st">"adult.test"</span>,<span class="at">sep=</span><span class="st">","</span>,<span class="at">skip=</span><span class="dv">1</span>,<span class="at">stringsAsFactors =</span> F)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(D)<span class="ot">=</span> <span class="fu">c</span>(<span class="st">"age"</span>,<span class="st">"workclass"</span>,<span class="st">"fnlwgt"</span>,<span class="st">"education"</span>,<span class="st">"education_num"</span>,<span class="st">"matrital_status"</span>,</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>               <span class="st">"occupation"</span>,<span class="st">"relationship"</span>,<span class="st">"race"</span>,<span class="st">"sex"</span>,<span class="st">"capital_gain"</span>,<span class="st">"capital_loss"</span>,</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>               <span class="st">"hours_per_week"</span>,<span class="st">"native_country/region"</span>,<span class="st">"salary"</span>)</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(Dt) <span class="ot">=</span> <span class="fu">colnames</span>(D)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="do">#### extract discrete variables</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>dis.indice <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">6</span>,<span class="dv">7</span>,<span class="dv">8</span>,<span class="dv">9</span>,<span class="dv">10</span>,<span class="dv">14</span>)</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>con.indice <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">5</span>,<span class="dv">11</span>,<span class="dv">12</span>,<span class="dv">13</span>)</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>is.class.zero <span class="ot">=</span> (D[,<span class="dv">15</span>]<span class="sc">==</span><span class="st">" &lt;=50K"</span>)</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>Yt <span class="ot">=</span> <span class="fu">rep</span>(<span class="dv">0</span>,<span class="fu">nrow</span>(Dt))</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>Yt[Dt[,<span class="dv">15</span>]<span class="sc">==</span><span class="st">" &gt;50K."</span>] <span class="ot">=</span> <span class="dv">1</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="do">#### training and testing</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>alpha <span class="ot">=</span> <span class="dv">1</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>n0 <span class="ot">=</span> <span class="fu">sum</span>(is.class.zero)</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>n1 <span class="ot">=</span> <span class="fu">sum</span>(<span class="sc">!</span>is.class.zero)</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>P0 <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">0</span>,<span class="at">nrow=</span><span class="fu">nrow</span>(Dt),<span class="at">ncol=</span>(<span class="fu">ncol</span>(Dt)<span class="sc">-</span><span class="dv">1</span>))</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>P1 <span class="ot">=</span> P0</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a><span class="do">##### for discrete variables</span></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> dis.indice){</span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">=</span> <span class="fu">c</span>(D[is.class.zero,i],D[<span class="sc">!</span>is.class.zero,i],Dt[,i])</span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">=</span> <span class="fu">as.factor</span>(x)</span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>  xnames <span class="ot">=</span> <span class="fu">levels</span>(x)</span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>  loc <span class="ot">=</span> <span class="fu">which</span>(xnames<span class="sc">==</span><span class="st">" ?"</span>)</span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">length</span>(loc)<span class="sc">!=</span><span class="dv">0</span>){</span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>    xnames <span class="ot">=</span> xnames[<span class="sc">-</span>loc]</span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>  d <span class="ot">=</span> <span class="fu">length</span>(xnames)</span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>  <span class="do">#### training and testing at the same time</span></span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>d){</span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>    P0[Dt[,i]<span class="sc">==</span>xnames[j],i] <span class="ot">=</span> <span class="fu">log</span>((<span class="fu">sum</span>(D[is.class.zero,i]<span class="sc">==</span>xnames[j])<span class="sc">+</span>alpha)<span class="sc">/</span>(n0<span class="sc">+</span>d<span class="sc">*</span>alpha))</span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>    P1[Dt[,i]<span class="sc">==</span>xnames[j],i] <span class="ot">=</span> <span class="fu">log</span>((<span class="fu">sum</span>(D[<span class="sc">!</span>is.class.zero,i]<span class="sc">==</span>xnames[j])<span class="sc">+</span>alpha)<span class="sc">/</span>(n1<span class="sc">+</span>d<span class="sc">*</span>alpha))</span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a><span class="do">##### for continuous variables</span></span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> con.indice){</span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a>  sigma0 <span class="ot">=</span> <span class="fu">sd</span>(D[is.class.zero,i]); sigma1 <span class="ot">=</span> <span class="fu">sd</span>(D[<span class="sc">!</span>is.class.zero,i])</span>
+<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a>  mu0 <span class="ot">=</span> <span class="fu">mean</span>(D[is.class.zero,i]); mu1 <span class="ot">=</span> <span class="fu">mean</span>(D[<span class="sc">!</span>is.class.zero,i])</span>
+<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a>  P0[,i] <span class="ot">=</span> <span class="sc">-</span><span class="fu">log</span>(sigma0)<span class="sc">-</span>(Dt[,i]<span class="sc">-</span>mu0)<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>sigma0<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span><span class="dv">2</span></span>
+<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a>  P1[,i] <span class="ot">=</span> <span class="sc">-</span><span class="fu">log</span>(sigma1)<span class="sc">-</span>(Dt[,i]<span class="sc">-</span>mu1)<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>sigma1<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span><span class="dv">2</span></span>
+<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a><span class="do">#### NB result</span></span>
+<span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a>P0 <span class="ot">=</span> <span class="fu">cbind</span>(P0,<span class="fu">rep</span>(<span class="fu">log</span>(n0<span class="sc">/</span>(n0<span class="sc">+</span>n1)),<span class="fu">nrow</span>(P0)))</span>
+<span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a>P1 <span class="ot">=</span> <span class="fu">cbind</span>(P1,<span class="fu">rep</span>(<span class="fu">log</span>(n1<span class="sc">/</span>(n0<span class="sc">+</span>n1)),<span class="fu">nrow</span>(P1)))</span>
+<span id="cb9-60"><a href="#cb9-60" aria-hidden="true" tabindex="-1"></a>diff.P <span class="ot">=</span> P0 <span class="sc">-</span> P1</span>
+<span id="cb9-61"><a href="#cb9-61" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(diff.P) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"age"</span>,<span class="st">"workclass"</span>,<span class="st">"fnlwgt"</span>,<span class="st">"education"</span>,<span class="st">"education_num"</span>,<span class="st">"matrital_status"</span>,</span>
+<span id="cb9-62"><a href="#cb9-62" aria-hidden="true" tabindex="-1"></a>  <span class="st">"occupation"</span>,<span class="st">"relationship"</span>,<span class="st">"race"</span>,<span class="st">"sex"</span>,<span class="st">"capital_gain"</span>,<span class="st">"capital_loss"</span>,</span>
+<span id="cb9-63"><a href="#cb9-63" aria-hidden="true" tabindex="-1"></a>  <span class="st">"hours_per_week"</span>,<span class="st">"native_country/region"</span>,<span class="st">"prior"</span>)</span>
+<span id="cb9-64"><a href="#cb9-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-65"><a href="#cb9-65" aria-hidden="true" tabindex="-1"></a>diff <span class="ot">=</span> <span class="fu">rowSums</span>(diff.P)          </span>
+<span id="cb9-66"><a href="#cb9-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-67"><a href="#cb9-67" aria-hidden="true" tabindex="-1"></a><span class="co">#M0 = rowSums(P0)+log(n0/(n0+n1))</span></span>
+<span id="cb9-68"><a href="#cb9-68" aria-hidden="true" tabindex="-1"></a><span class="co">#M1 = rowSums(P1)+log(n1/(n0+n1))</span></span>
+<span id="cb9-69"><a href="#cb9-69" aria-hidden="true" tabindex="-1"></a><span class="co">#diff = M0-M1</span></span>
+<span id="cb9-70"><a href="#cb9-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-71"><a href="#cb9-71" aria-hidden="true" tabindex="-1"></a><span class="do">###### plot ROC</span></span>
+<span id="cb9-72"><a href="#cb9-72" aria-hidden="true" tabindex="-1"></a>Yt.sorted <span class="ot">=</span> Yt[<span class="fu">sort</span>(diff,<span class="at">index.return=</span>T)[[<span class="st">"ix"</span>]]]</span>
+<span id="cb9-73"><a href="#cb9-73" aria-hidden="true" tabindex="-1"></a>sen <span class="ot">=</span> <span class="fu">rep</span>(<span class="dv">0</span>,<span class="fu">length</span>(Yt.sorted)<span class="sc">+</span><span class="dv">1</span>)</span>
+<span id="cb9-74"><a href="#cb9-74" aria-hidden="true" tabindex="-1"></a>spe <span class="ot">=</span> <span class="fu">rep</span>(<span class="fu">sum</span>(Yt.sorted<span class="sc">==</span><span class="dv">0</span>),<span class="fu">length</span>(Yt.sorted)<span class="sc">+</span><span class="dv">1</span>)</span>
+<span id="cb9-75"><a href="#cb9-75" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(Yt.sorted)){</span>
+<span id="cb9-76"><a href="#cb9-76" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (Yt.sorted[j]<span class="sc">==</span><span class="dv">1</span>){</span>
+<span id="cb9-77"><a href="#cb9-77" aria-hidden="true" tabindex="-1"></a>    sen[j<span class="sc">+</span><span class="dv">1</span>]<span class="ot">=</span>sen[j]<span class="sc">+</span><span class="dv">1</span>;spe[j<span class="sc">+</span><span class="dv">1</span>]<span class="ot">=</span>spe[j]</span>
+<span id="cb9-78"><a href="#cb9-78" aria-hidden="true" tabindex="-1"></a>  }<span class="cf">else</span>{</span>
+<span id="cb9-79"><a href="#cb9-79" aria-hidden="true" tabindex="-1"></a>    spe[j<span class="sc">+</span><span class="dv">1</span>]<span class="ot">=</span>spe[j]<span class="sc">-</span><span class="dv">1</span>;sen[j<span class="sc">+</span><span class="dv">1</span>]<span class="ot">=</span>sen[j]</span>
+<span id="cb9-80"><a href="#cb9-80" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb9-81"><a href="#cb9-81" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-82"><a href="#cb9-82" aria-hidden="true" tabindex="-1"></a>sen <span class="ot">=</span> sen<span class="sc">/</span><span class="fu">sum</span>(Yt.sorted<span class="sc">==</span><span class="dv">1</span>)</span>
+<span id="cb9-83"><a href="#cb9-83" aria-hidden="true" tabindex="-1"></a>spe <span class="ot">=</span> spe<span class="sc">/</span><span class="fu">sum</span>(Yt.sorted<span class="sc">==</span><span class="dv">0</span>)</span>
+<span id="cb9-84"><a href="#cb9-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-85"><a href="#cb9-85" aria-hidden="true" tabindex="-1"></a>auc <span class="ot">=</span> <span class="fu">sum</span>((spe[<span class="dv">1</span><span class="sc">:</span>(<span class="fu">length</span>(spe)<span class="sc">-</span><span class="dv">1</span>)]<span class="sc">-</span>spe[<span class="dv">2</span><span class="sc">:</span><span class="fu">length</span>(spe)])<span class="sc">*</span>sen[<span class="dv">1</span><span class="sc">:</span>(<span class="fu">length</span>(sen)<span class="sc">-</span><span class="dv">1</span>)])</span>
+<span id="cb9-86"><a href="#cb9-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-87"><a href="#cb9-87" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">1</span><span class="sc">-</span>spe,sen,<span class="at">type=</span><span class="st">"l"</span>,<span class="at">col=</span><span class="st">"blue"</span>,<span class="at">main =</span> <span class="fu">paste0</span>(<span class="st">"ROC curve, AUC ="</span>,<span class="fu">round</span>(auc,<span class="dv">3</span>)),<span class="at">ylab =</span> <span class="st">"sensitivity"</span>,<span class="at">xlab =</span> <span class="st">"1-specificity"</span>)</span>
+<span id="cb9-88"><a href="#cb9-88" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">a=</span><span class="dv">0</span>,<span class="at">b=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Naive-bayes-model_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="do">### confusion matrix</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>Confmat <span class="ot">=</span> <span class="fu">matrix</span>(<span class="cn">NA</span>,<span class="at">nrow =</span> <span class="dv">2</span>,<span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(Confmat) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"&lt;=50K"</span>,<span class="st">"&gt;50K"</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(Confmat) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Predict &lt;=50K"</span>,<span class="st">"Predict &gt;50K"</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>Confmat[<span class="st">"&lt;=50K"</span>,<span class="st">"Predict &lt;=50K"</span>] <span class="ot">=</span> <span class="fu">sum</span>(diff<span class="sc">&gt;</span><span class="dv">0</span> <span class="sc">&amp;</span> Yt<span class="sc">==</span><span class="dv">0</span>)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>Confmat[<span class="st">"&lt;=50K"</span>,<span class="st">"Predict &gt;50K"</span>] <span class="ot">=</span> <span class="fu">sum</span>(diff<span class="sc">&lt;</span><span class="dv">0</span> <span class="sc">&amp;</span> Yt<span class="sc">==</span><span class="dv">0</span>)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>Confmat[<span class="st">"&gt;50K"</span>,<span class="st">"Predict &lt;=50K"</span>] <span class="ot">=</span> <span class="fu">sum</span>(diff<span class="sc">&gt;</span><span class="dv">0</span> <span class="sc">&amp;</span> Yt<span class="sc">==</span><span class="dv">1</span>)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>Confmat[<span class="st">"&gt;50K"</span>,<span class="st">"Predict &gt;50K"</span>] <span class="ot">=</span> <span class="fu">sum</span>(diff<span class="sc">&lt;</span><span class="dv">0</span> <span class="sc">&amp;</span> Yt<span class="sc">==</span><span class="dv">1</span>)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>acc <span class="ot">=</span> <span class="fu">sum</span>(Confmat[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">4</span>)])<span class="sc">/</span><span class="fu">sum</span>(Confmat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>Confmat</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       Predict &lt;=50K Predict &gt;50K</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;=50K         11547          888</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &gt;50K           1863         1983</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Total accuary ="</span>, acc)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Total accuary = 0.83103</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="fu">proc.time</span>() <span class="sc">-</span> ptm</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    user  system elapsed </span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   0.289   0.015   0.305</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 
