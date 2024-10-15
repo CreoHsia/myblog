@@ -360,6 +360,8 @@ print(model)
 
 ## Supervisor-provided R code for Naive Bayes Classifier
 
+The followings are the code provided from my supervisor, which suit for the adult data only.
+
 ```{r}
 
 ptm <- proc.time()
@@ -447,9 +449,6 @@ spe = spe/sum(Yt.sorted==0)
 
 auc = sum((spe[1:(length(spe)-1)]-spe[2:length(spe)])*sen[1:(length(sen)-1)])
 
-plot(1-spe,sen,type="l",col="blue",main = paste0("ROC curve, AUC =",round(auc,3)),ylab = "sensitivity",xlab = "1-specificity")
-abline(a=0,b=1)
-
 ### confusion matrix
 Confmat = matrix(NA,nrow = 2,ncol = 2)
 rownames(Confmat) = c("<=50K",">50K")
@@ -461,11 +460,14 @@ Confmat[">50K","Predict >50K"] = sum(diff<0 & Yt==1)
 acc = sum(Confmat[c(1,4)])/sum(Confmat)
 ```
 
+Result:
+
 ```{r}
 #| code-fold: false
 Confmat
 cat("Total accuary =", acc)
 
 proc.time() - ptm
-
+plot(1-spe,sen,type="l",col="blue",main = paste0("ROC curve, AUC =",round(auc,3)),ylab = "sensitivity",xlab = "1-specificity")
+abline(a=0,b=1)
 ```

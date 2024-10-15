@@ -489,14 +489,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  roc <span class="ot">&lt;-</span> <span class="fu">roc_auc</span>(newdata<span class="sc">$</span>V15,pred)</span>
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>   user  system elapsed </span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="fl">0.160</span>   <span class="fl">0.005</span>   <span class="fl">0.165</span> </span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="fl">0.160</span>   <span class="fl">0.006</span>   <span class="fl">0.167</span> </span>
 <span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(e1071)</span>
 <span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>({</span>
 <span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  model2 <span class="ot">&lt;-</span> e1071<span class="sc">::</span><span class="fu">naiveBayes</span>(V15<span class="sc">~</span>.,<span class="at">data=</span>data)</span>
 <span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  pred2 <span class="ot">&lt;-</span> <span class="fu">predict</span>(model2,newdata)</span>
 <span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>   user  system elapsed </span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  <span class="fl">1.327</span>   <span class="fl">0.008</span>   <span class="fl">1.338</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  <span class="fl">1.327</span>   <span class="fl">0.012</span>   <span class="fl">1.351</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Faster than the function in <code>e1071</code>.</p>
 <div class="cell">
@@ -712,6 +712,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="supervisor-provided-r-code-for-naive-bayes-classifier" class="level2" data-number="7">
 <h2 data-number="7" class="anchored" data-anchor-id="supervisor-provided-r-code-for-naive-bayes-classifier"><span class="header-section-number">7</span> Supervisor-provided R code for Naive Bayes Classifier</h2>
+<p>The followings are the code provided from my supervisor, which suit for the adult data only.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -801,41 +802,38 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb9-84"><a href="#cb9-84" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-85"><a href="#cb9-85" aria-hidden="true" tabindex="-1"></a>auc <span class="ot">=</span> <span class="fu">sum</span>((spe[<span class="dv">1</span><span class="sc">:</span>(<span class="fu">length</span>(spe)<span class="sc">-</span><span class="dv">1</span>)]<span class="sc">-</span>spe[<span class="dv">2</span><span class="sc">:</span><span class="fu">length</span>(spe)])<span class="sc">*</span>sen[<span class="dv">1</span><span class="sc">:</span>(<span class="fu">length</span>(sen)<span class="sc">-</span><span class="dv">1</span>)])</span>
 <span id="cb9-86"><a href="#cb9-86" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-87"><a href="#cb9-87" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">1</span><span class="sc">-</span>spe,sen,<span class="at">type=</span><span class="st">"l"</span>,<span class="at">col=</span><span class="st">"blue"</span>,<span class="at">main =</span> <span class="fu">paste0</span>(<span class="st">"ROC curve, AUC ="</span>,<span class="fu">round</span>(auc,<span class="dv">3</span>)),<span class="at">ylab =</span> <span class="st">"sensitivity"</span>,<span class="at">xlab =</span> <span class="st">"1-specificity"</span>)</span>
-<span id="cb9-88"><a href="#cb9-88" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">a=</span><span class="dv">0</span>,<span class="at">b=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-87"><a href="#cb9-87" aria-hidden="true" tabindex="-1"></a><span class="do">### confusion matrix</span></span>
+<span id="cb9-88"><a href="#cb9-88" aria-hidden="true" tabindex="-1"></a>Confmat <span class="ot">=</span> <span class="fu">matrix</span>(<span class="cn">NA</span>,<span class="at">nrow =</span> <span class="dv">2</span>,<span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb9-89"><a href="#cb9-89" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(Confmat) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"&lt;=50K"</span>,<span class="st">"&gt;50K"</span>)</span>
+<span id="cb9-90"><a href="#cb9-90" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(Confmat) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Predict &lt;=50K"</span>,<span class="st">"Predict &gt;50K"</span>)</span>
+<span id="cb9-91"><a href="#cb9-91" aria-hidden="true" tabindex="-1"></a>Confmat[<span class="st">"&lt;=50K"</span>,<span class="st">"Predict &lt;=50K"</span>] <span class="ot">=</span> <span class="fu">sum</span>(diff<span class="sc">&gt;</span><span class="dv">0</span> <span class="sc">&amp;</span> Yt<span class="sc">==</span><span class="dv">0</span>)</span>
+<span id="cb9-92"><a href="#cb9-92" aria-hidden="true" tabindex="-1"></a>Confmat[<span class="st">"&lt;=50K"</span>,<span class="st">"Predict &gt;50K"</span>] <span class="ot">=</span> <span class="fu">sum</span>(diff<span class="sc">&lt;</span><span class="dv">0</span> <span class="sc">&amp;</span> Yt<span class="sc">==</span><span class="dv">0</span>)</span>
+<span id="cb9-93"><a href="#cb9-93" aria-hidden="true" tabindex="-1"></a>Confmat[<span class="st">"&gt;50K"</span>,<span class="st">"Predict &lt;=50K"</span>] <span class="ot">=</span> <span class="fu">sum</span>(diff<span class="sc">&gt;</span><span class="dv">0</span> <span class="sc">&amp;</span> Yt<span class="sc">==</span><span class="dv">1</span>)</span>
+<span id="cb9-94"><a href="#cb9-94" aria-hidden="true" tabindex="-1"></a>Confmat[<span class="st">"&gt;50K"</span>,<span class="st">"Predict &gt;50K"</span>] <span class="ot">=</span> <span class="fu">sum</span>(diff<span class="sc">&lt;</span><span class="dv">0</span> <span class="sc">&amp;</span> Yt<span class="sc">==</span><span class="dv">1</span>)</span>
+<span id="cb9-95"><a href="#cb9-95" aria-hidden="true" tabindex="-1"></a>acc <span class="ot">=</span> <span class="fu">sum</span>(Confmat[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">4</span>)])<span class="sc">/</span><span class="fu">sum</span>(Confmat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+</div>
+<p>Result:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>Confmat</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>      Predict <span class="sc">&lt;=</span><span class="dv">50</span>K Predict <span class="sc">&gt;</span><span class="dv">50</span>K</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="sc">&lt;=</span><span class="dv">50</span>K         <span class="dv">11547</span>          <span class="dv">888</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span><span class="dv">50</span>K           <span class="dv">1863</span>         <span class="dv">1983</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Total accuary ="</span>, acc)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>Total accuary <span class="ot">=</span> <span class="fl">0.83103</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="fu">proc.time</span>() <span class="sc">-</span> ptm</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>   user  system elapsed </span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="fl">0.227</span>   <span class="fl">0.012</span>   <span class="fl">0.240</span> </span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">1</span><span class="sc">-</span>spe,sen,<span class="at">type=</span><span class="st">"l"</span>,<span class="at">col=</span><span class="st">"blue"</span>,<span class="at">main =</span> <span class="fu">paste0</span>(<span class="st">"ROC curve, AUC ="</span>,<span class="fu">round</span>(auc,<span class="dv">3</span>)),<span class="at">ylab =</span> <span class="st">"sensitivity"</span>,<span class="at">xlab =</span> <span class="st">"1-specificity"</span>)</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">a=</span><span class="dv">0</span>,<span class="at">b=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Naive-bayes-model_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Naive-bayes-model_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="do">### confusion matrix</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>Confmat <span class="ot">=</span> <span class="fu">matrix</span>(<span class="cn">NA</span>,<span class="at">nrow =</span> <span class="dv">2</span>,<span class="at">ncol =</span> <span class="dv">2</span>)</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(Confmat) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"&lt;=50K"</span>,<span class="st">"&gt;50K"</span>)</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(Confmat) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Predict &lt;=50K"</span>,<span class="st">"Predict &gt;50K"</span>)</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>Confmat[<span class="st">"&lt;=50K"</span>,<span class="st">"Predict &lt;=50K"</span>] <span class="ot">=</span> <span class="fu">sum</span>(diff<span class="sc">&gt;</span><span class="dv">0</span> <span class="sc">&amp;</span> Yt<span class="sc">==</span><span class="dv">0</span>)</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>Confmat[<span class="st">"&lt;=50K"</span>,<span class="st">"Predict &gt;50K"</span>] <span class="ot">=</span> <span class="fu">sum</span>(diff<span class="sc">&lt;</span><span class="dv">0</span> <span class="sc">&amp;</span> Yt<span class="sc">==</span><span class="dv">0</span>)</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>Confmat[<span class="st">"&gt;50K"</span>,<span class="st">"Predict &lt;=50K"</span>] <span class="ot">=</span> <span class="fu">sum</span>(diff<span class="sc">&gt;</span><span class="dv">0</span> <span class="sc">&amp;</span> Yt<span class="sc">==</span><span class="dv">1</span>)</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>Confmat[<span class="st">"&gt;50K"</span>,<span class="st">"Predict &gt;50K"</span>] <span class="ot">=</span> <span class="fu">sum</span>(diff<span class="sc">&lt;</span><span class="dv">0</span> <span class="sc">&amp;</span> Yt<span class="sc">==</span><span class="dv">1</span>)</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>acc <span class="ot">=</span> <span class="fu">sum</span>(Confmat[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">4</span>)])<span class="sc">/</span><span class="fu">sum</span>(Confmat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>Confmat</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>      Predict <span class="sc">&lt;=</span><span class="dv">50</span>K Predict <span class="sc">&gt;</span><span class="dv">50</span>K</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="sc">&lt;=</span><span class="dv">50</span>K         <span class="dv">11547</span>          <span class="dv">888</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span><span class="dv">50</span>K           <span class="dv">1863</span>         <span class="dv">1983</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Total accuary ="</span>, acc)</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>Total accuary <span class="ot">=</span> <span class="fl">0.83103</span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="fu">proc.time</span>() <span class="sc">-</span> ptm</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>   user  system elapsed </span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fl">0.285</span>   <span class="fl">0.016</span>   <span class="fl">0.304</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 
