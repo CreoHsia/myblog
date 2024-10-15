@@ -4,6 +4,7 @@ project:
 website:
   title: "Creo Hsia"
   navbar:
+    background: "#F8F2FF"
     right:
       - text: 'Blogs'
         href: blog.qmd
@@ -16,6 +17,7 @@ website:
 format:
   html:
     theme: cosmo
+    highlight-style: breeze
     css: styles.css
     
 

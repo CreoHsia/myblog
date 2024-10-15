@@ -192,7 +192,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">On this page</h2>
    
-  <ul class="collapse">
+  <ul>
   <li><a href="#function-bayesclasifier" id="toc-function-bayesclasifier" class="nav-link active" data-scroll-target="#function-bayesclasifier"><span class="header-section-number">1</span> Function <code>Bayesclasifier</code></a></li>
   <li><a href="#function-predict.naivebayes_clasifier" id="toc-function-predict.naivebayes_clasifier" class="nav-link" data-scroll-target="#function-predict.naivebayes_clasifier"><span class="header-section-number">2</span> Function <code>predict.naiveBayes_clasifier</code></a></li>
   <li><a href="#function-confusion_matrix-and-roc_auc" id="toc-function-confusion_matrix-and-roc_auc" class="nav-link" data-scroll-target="#function-confusion_matrix-and-roc_auc"><span class="header-section-number">3</span> Function <code>confusion_matrix</code> and <code>roc_auc</code></a></li>
@@ -488,23 +488,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(model,newdata,<span class="st">"raw"</span>)  </span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  roc <span class="ot">&lt;-</span> <span class="fu">roc_auc</span>(newdata<span class="sc">$</span>V15,pred)</span>
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    user  system elapsed </span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   0.163   0.005   0.168</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>   user  system elapsed </span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="fl">0.160</span>   <span class="fl">0.005</span>   <span class="fl">0.165</span> </span>
 <span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(e1071)</span>
 <span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>({</span>
 <span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  model2 <span class="ot">&lt;-</span> e1071<span class="sc">::</span><span class="fu">naiveBayes</span>(V15<span class="sc">~</span>.,<span class="at">data=</span>data)</span>
 <span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  pred2 <span class="ot">&lt;-</span> <span class="fu">predict</span>(model2,newdata)</span>
 <span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    user  system elapsed </span></span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   1.350   0.010   1.363</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>   user  system elapsed </span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  <span class="fl">1.327</span>   <span class="fl">0.008</span>   <span class="fl">1.338</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Faster than the function in <code>e1071</code>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confusion_matrix</span>(newdata<span class="sc">$</span>V15,pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(model,newdata,<span class="st">"class"</span>))</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Predicted</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Actual    &lt;=50K  &gt;50K</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;=50K  11547   888</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &gt;50K    1863  1983</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>        Predicted</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>Actual    <span class="sc">&lt;=</span><span class="dv">50</span>K  <span class="sc">&gt;</span><span class="dv">50</span>K</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>   <span class="sc">&lt;=</span><span class="dv">50</span>K  <span class="dv">11547</span>   <span class="dv">888</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>   <span class="sc">&gt;</span><span class="dv">50</span>K    <span class="dv">1863</span>  <span class="dv">1983</span></span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(roc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
@@ -561,152 +561,152 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(model)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Naive Bayes Model</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =================</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Class Levels:</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] " &lt;=50K" " &gt;50K" </span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Prior Probabilities:</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; label</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     &lt;=50K      &gt;50K </span></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0.7591904 0.2408096 </span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature Statistics:</span></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V1 </span></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Numeric</span></span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            Mean       SD</span></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 36.78374 14.02009</span></span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  44.24984 10.51903</span></span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V2 </span></span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Categorical</span></span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Federal-gov  Local-gov  Never-worked   Private  Self-emp-inc</span></span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K   0.02385959 0.05972986  0.0003235199 0.7171627    0.02001779</span></span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K    0.04739457 0.07873614  0.0001274048 0.6324373    0.07937317</span></span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Self-emp-not-inc  State-gov  Without-pay</span></span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K        0.07351990 0.03825623 0.0006065998</span></span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K         0.09236845 0.04510129 0.0001274048</span></span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V3 </span></span>
-<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Numeric</span></span>
-<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            Mean       SD</span></span>
-<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 190340.9 106482.3</span></span>
-<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  188005.0 102541.8</span></span>
-<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V4 </span></span>
-<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Categorical</span></span>
-<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               10th        11th        12th      1st-4th     5th-6th     7th-8th</span></span>
-<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.035252264 0.045116429 0.016211190 0.0065895860 0.012855757 0.024539133</span></span>
-<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.008018328 0.007763778 0.004327351 0.0008909253 0.002163676 0.005218277</span></span>
-<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                9th  Assoc-acdm  Assoc-voc  Bachelors   Doctorate   HS-grad</span></span>
-<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.019728331  0.03246281 0.04131630  0.1267384 0.004366106 0.3568483</span></span>
-<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.003563701  0.03385516 0.04607356  0.2828051 0.039073438 0.2133130</span></span>
-<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;           Masters   Preschool  Prof-school  Some-college</span></span>
-<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.03092658 0.002102199  0.006225744     0.2387209</span></span>
-<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.12218404 0.000127275  0.053964618     0.1766578</span></span>
-<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V5 </span></span>
-<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Numeric</span></span>
-<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             Mean       SD</span></span>
-<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K  9.595065 2.436147</span></span>
-<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  11.611657 2.385129</span></span>
-<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V6 </span></span>
-<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Categorical</span></span>
-<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          Divorced  Married-AF-spouse  Married-civ-spouse  Married-spouse-absent</span></span>
-<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.16099810       0.0005661827           0.3350588            0.015570025</span></span>
-<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.05912334       0.0014016310           0.8528287            0.004459735</span></span>
-<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Never-married   Separated    Widowed</span></span>
-<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K     0.41222146 0.038823958 0.03676143</span></span>
-<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K      0.06269113 0.008537207 0.01095821</span></span>
-<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V7 </span></span>
-<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Categorical</span></span>
-<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Adm-clerical  Armed-Forces  Craft-repair  Exec-managerial</span></span>
-<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K    0.13196410  0.0003638716     0.1282041       0.08486294</span></span>
-<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K     0.06467218  0.0002546149     0.1183959       0.25066836</span></span>
-<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Farming-fishing  Handlers-cleaners  Machine-op-inspct  Other-service</span></span>
-<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K       0.03557856         0.05195278         0.07087410     0.12771893</span></span>
-<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K        0.01476766         0.01107575         0.03195417     0.01756843</span></span>
-<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Priv-house-serv  Prof-specialty  Protective-serv     Sales</span></span>
-<span id="cb8-72"><a href="#cb8-72" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K     0.0060240964      0.09226166       0.01774885 0.1078677</span></span>
-<span id="cb8-73"><a href="#cb8-73" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K      0.0002546149      0.23679185       0.02698918 0.1252705</span></span>
-<span id="cb8-74"><a href="#cb8-74" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Tech-support  Transport-moving</span></span>
-<span id="cb8-75"><a href="#cb8-75" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K    0.02611789        0.05166977</span></span>
-<span id="cb8-76"><a href="#cb8-76" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K     0.03615532        0.04086569</span></span>
-<span id="cb8-77"><a href="#cb8-77" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb8-78"><a href="#cb8-78" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V8 </span></span>
-<span id="cb8-79"><a href="#cb8-79" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Categorical</span></span>
-<span id="cb8-80"><a href="#cb8-80" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          Husband  Not-in-family  Other-relative   Own-child  Unmarried</span></span>
-<span id="cb8-81"><a href="#cb8-81" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.2942651      0.3013023     0.038218879 0.202297177 0.13059128</span></span>
-<span id="cb8-82"><a href="#cb8-82" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.7543010      0.1092137     0.004842615 0.008665732 0.02790875</span></span>
-<span id="cb8-83"><a href="#cb8-83" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;              Wife</span></span>
-<span id="cb8-84"><a href="#cb8-84" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.03332524</span></span>
-<span id="cb8-85"><a href="#cb8-85" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.09506818</span></span>
-<span id="cb8-86"><a href="#cb8-86" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb8-87"><a href="#cb8-87" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V9 </span></span>
-<span id="cb8-88"><a href="#cb8-88" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Categorical</span></span>
-<span id="cb8-89"><a href="#cb8-89" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Amer-Indian-Eskimo  Asian-Pac-Islander      Black       Other     White</span></span>
-<span id="cb8-90"><a href="#cb8-90" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K         0.011162791          0.03089990 0.11073812 0.009989889 0.8372093</span></span>
-<span id="cb8-91"><a href="#cb8-91" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K          0.004715779          0.03530461 0.04945195 0.003313790 0.9072139</span></span>
-<span id="cb8-92"><a href="#cb8-92" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb8-93"><a href="#cb8-93" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V10 </span></span>
-<span id="cb8-94"><a href="#cb8-94" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Categorical</span></span>
-<span id="cb8-95"><a href="#cb8-95" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;           Female      Male</span></span>
-<span id="cb8-96"><a href="#cb8-96" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.3880349 0.6119651</span></span>
-<span id="cb8-97"><a href="#cb8-97" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.1504526 0.8495474</span></span>
-<span id="cb8-98"><a href="#cb8-98" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb8-99"><a href="#cb8-99" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V11 </span></span>
-<span id="cb8-100"><a href="#cb8-100" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Numeric</span></span>
-<span id="cb8-101"><a href="#cb8-101" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             Mean         SD</span></span>
-<span id="cb8-102"><a href="#cb8-102" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K  148.7525   963.1393</span></span>
-<span id="cb8-103"><a href="#cb8-103" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  4006.1425 14570.3790</span></span>
-<span id="cb8-104"><a href="#cb8-104" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb8-105"><a href="#cb8-105" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V12 </span></span>
-<span id="cb8-106"><a href="#cb8-106" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Numeric</span></span>
-<span id="cb8-107"><a href="#cb8-107" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             Mean       SD</span></span>
-<span id="cb8-108"><a href="#cb8-108" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K  53.14292 310.7558</span></span>
-<span id="cb8-109"><a href="#cb8-109" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  195.00153 595.4876</span></span>
-<span id="cb8-110"><a href="#cb8-110" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb8-111"><a href="#cb8-111" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V13 </span></span>
-<span id="cb8-112"><a href="#cb8-112" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Numeric</span></span>
-<span id="cb8-113"><a href="#cb8-113" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            Mean       SD</span></span>
-<span id="cb8-114"><a href="#cb8-114" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 38.84021 12.31899</span></span>
-<span id="cb8-115"><a href="#cb8-115" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  45.47303 11.01297</span></span>
-<span id="cb8-116"><a href="#cb8-116" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb8-117"><a href="#cb8-117" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Feature: V14 </span></span>
-<span id="cb8-118"><a href="#cb8-118" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type: Categorical</span></span>
-<span id="cb8-119"><a href="#cb8-119" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            Cambodia      Canada       China     Columbia        Cuba</span></span>
-<span id="cb8-120"><a href="#cb8-120" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.0005250192 0.003352046 0.002261621 0.0023423933 0.002867412</span></span>
-<span id="cb8-121"><a href="#cb8-121" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.0010149708 0.005074854 0.002664298 0.0003806141 0.003298655</span></span>
-<span id="cb8-122"><a href="#cb8-122" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Dominican-Republic      Ecuador  El-Salvador     England       France</span></span>
-<span id="cb8-123"><a href="#cb8-123" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K        0.0027866403 0.0010096523  0.003957837 0.002463552 0.0007269496</span></span>
-<span id="cb8-124"><a href="#cb8-124" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K         0.0003806141 0.0006343568  0.001268714 0.003933012 0.0016493276</span></span>
-<span id="cb8-125"><a href="#cb8-125" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            Germany      Greece    Guatemala        Haiti  Holand-Netherlands</span></span>
-<span id="cb8-126"><a href="#cb8-126" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.003796293 0.000888494 0.0025039376 0.0016558297        8.077218e-05</span></span>
-<span id="cb8-127"><a href="#cb8-127" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.005709211 0.001141842 0.0005074854 0.0006343568        1.268714e-04</span></span>
-<span id="cb8-128"><a href="#cb8-128" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            Honduras         Hong      Hungary       India        Iran</span></span>
-<span id="cb8-129"><a href="#cb8-129" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.0005250192 0.0006057914 0.0004442470 0.002463552 0.001050038</span></span>
-<span id="cb8-130"><a href="#cb8-130" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.0002537427 0.0008880995 0.0005074854 0.005201725 0.002410556</span></span>
-<span id="cb8-131"><a href="#cb8-131" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             Ireland       Italy     Jamaica       Japan         Laos</span></span>
-<span id="cb8-132"><a href="#cb8-132" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.0008077218 0.001978918 0.002907799 0.001575058 0.0006865635</span></span>
-<span id="cb8-133"><a href="#cb8-133" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.0007612281 0.003298655 0.001395585 0.003171784 0.0003806141</span></span>
-<span id="cb8-134"><a href="#cb8-134" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             Mexico    Nicaragua  Outlying-US(Guam-USVI-etc)         Peru</span></span>
-<span id="cb8-135"><a href="#cb8-135" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.024675902 0.0013327410                0.0006057914 0.0012115827</span></span>
-<span id="cb8-136"><a href="#cb8-136" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.004313626 0.0003806141                0.0001268714 0.0003806141</span></span>
-<span id="cb8-137"><a href="#cb8-137" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Philippines      Poland     Portugal  Puerto-Rico     Scotland</span></span>
-<span id="cb8-138"><a href="#cb8-138" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K  0.005573281 0.001978918 0.0013731271  0.004159767 0.0004038609</span></span>
-<span id="cb8-139"><a href="#cb8-139" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K   0.007866024 0.001649328 0.0006343568  0.001649328 0.0005074854</span></span>
-<span id="cb8-140"><a href="#cb8-140" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;              South      Taiwan     Thailand  Trinadad&amp;Tobago  United-States</span></span>
-<span id="cb8-141"><a href="#cb8-141" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.002625096 0.001292355 0.0006461775     0.0007269496      0.8884940</span></span>
-<span id="cb8-142"><a href="#cb8-142" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.002156813 0.002664298 0.0005074854     0.0003806141      0.9099213</span></span>
-<span id="cb8-143"><a href="#cb8-143" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             Vietnam   Yugoslavia</span></span>
-<span id="cb8-144"><a href="#cb8-144" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;=50K 0.0025443237 0.0004442470</span></span>
-<span id="cb8-145"><a href="#cb8-145" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &gt;50K  0.0007612281 0.0008880995</span></span>
-<span id="cb8-146"><a href="#cb8-146" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb8-147"><a href="#cb8-147" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =================</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>Naive Bayes Model</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="sc">==</span><span class="er">===============</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>Class Levels<span class="sc">:</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">" &lt;=50K"</span> <span class="st">" &gt;50K"</span> </span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>Prior Probabilities<span class="sc">:</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>label</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="sc">&lt;=</span><span class="dv">50</span>K      <span class="sc">&gt;</span><span class="dv">50</span>K </span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="fl">0.7591904</span> <span class="fl">0.2408096</span> </span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>Feature Statistics<span class="sc">:</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>Feature<span class="sc">:</span> V1 </span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>Type<span class="sc">:</span> Numeric</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>           Mean       SD</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a> <span class="sc">&lt;=</span><span class="dv">50</span>K <span class="fl">36.78374</span> <span class="fl">14.02009</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a> <span class="sc">&gt;</span><span class="dv">50</span>K  <span class="fl">44.24984</span> <span class="fl">10.51903</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>Feature<span class="sc">:</span> V2 </span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>Type<span class="sc">:</span> Categorical</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>        Federal<span class="sc">-</span>gov  Local<span class="sc">-</span>gov  Never<span class="sc">-</span>worked   Private  Self<span class="sc">-</span>emp<span class="sc">-</span>inc</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a> <span class="sc">&lt;=</span><span class="dv">50</span>K   <span class="fl">0.02385959</span> <span class="fl">0.05972986</span>  <span class="fl">0.0003235199</span> <span class="fl">0.7171627</span>    <span class="fl">0.02001779</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a> <span class="sc">&gt;</span><span class="dv">50</span>K    <span class="fl">0.04739457</span> <span class="fl">0.07873614</span>  <span class="fl">0.0001274048</span> <span class="fl">0.6324373</span>    <span class="fl">0.07937317</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>        Self<span class="sc">-</span>emp<span class="sc">-</span>not<span class="sc">-</span>inc  State<span class="sc">-</span>gov  Without<span class="sc">-</span>pay</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a> <span class="sc">&lt;=</span><span class="dv">50</span>K        <span class="fl">0.07351990</span> <span class="fl">0.03825623</span> <span class="fl">0.0006065998</span></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a> <span class="sc">&gt;</span><span class="dv">50</span>K         <span class="fl">0.09236845</span> <span class="fl">0.04510129</span> <span class="fl">0.0001274048</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>Feature<span class="sc">:</span> V3 </span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>Type<span class="sc">:</span> Numeric</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>           Mean       SD</span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a> <span class="sc">&lt;=</span><span class="dv">50</span>K <span class="fl">190340.9</span> <span class="fl">106482.3</span></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a> <span class="sc">&gt;</span><span class="dv">50</span>K  <span class="fl">188005.0</span> <span class="fl">102541.8</span></span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>Feature<span class="sc">:</span> V4 </span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>Type<span class="sc">:</span> Categorical</span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>              <span class="dv">10</span>th        <span class="dv">11</span>th        <span class="dv">12</span>th      <span class="dv">1</span>st<span class="dv">-4</span>th     <span class="dv">5</span>th<span class="dv">-6</span>th     <span class="dv">7</span>th<span class="dv">-8</span>th</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a> <span class="sc">&lt;=</span><span class="dv">50</span>K <span class="fl">0.035252264</span> <span class="fl">0.045116429</span> <span class="fl">0.016211190</span> <span class="fl">0.0065895860</span> <span class="fl">0.012855757</span> <span class="fl">0.024539133</span></span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a> <span class="sc">&gt;</span><span class="dv">50</span>K  <span class="fl">0.008018328</span> <span class="fl">0.007763778</span> <span class="fl">0.004327351</span> <span class="fl">0.0008909253</span> <span class="fl">0.002163676</span> <span class="fl">0.005218277</span></span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>               <span class="dv">9</span>th  Assoc<span class="sc">-</span>acdm  Assoc<span class="sc">-</span>voc  Bachelors   Doctorate   HS<span class="sc">-</span>grad</span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a> <span class="sc">&lt;=</span><span class="dv">50</span>K <span class="fl">0.019728331</span>  <span class="fl">0.03246281</span> <span class="fl">0.04131630</span>  <span class="fl">0.1267384</span> <span class="fl">0.004366106</span> <span class="fl">0.3568483</span></span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a> <span class="sc">&gt;</span><span class="dv">50</span>K  <span class="fl">0.003563701</span>  <span class="fl">0.03385516</span> <span class="fl">0.04607356</span>  <span class="fl">0.2828051</span> <span class="fl">0.039073438</span> <span class="fl">0.2133130</span></span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>          Masters   Preschool  Prof<span class="sc">-</span>school  Some<span class="sc">-</span>college</span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a> <span class="sc">&lt;=</span><span class="dv">50</span>K <span class="fl">0.03092658</span> <span class="fl">0.002102199</span>  <span class="fl">0.006225744</span>     <span class="fl">0.2387209</span></span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a> <span class="sc">&gt;</span><span class="dv">50</span>K  <span class="fl">0.12218404</span> <span class="fl">0.000127275</span>  <span class="fl">0.053964618</span>     <span class="fl">0.1766578</span></span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>Feature<span class="sc">:</span> V5 </span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>Type<span class="sc">:</span> Numeric</span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>            Mean       SD</span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a> <span class="sc">&lt;=</span><span class="dv">50</span>K  <span class="fl">9.595065</span> <span class="fl">2.436147</span></span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a> <span class="sc">&gt;</span><span class="dv">50</span>K  <span class="fl">11.611657</span> <span class="fl">2.385129</span></span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>Feature<span class="sc">:</span> V6 </span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>Type<span class="sc">:</span> Categorical</span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a>         Divorced  Married<span class="sc">-</span>AF<span class="sc">-</span>spouse  Married<span class="sc">-</span>civ<span class="sc">-</span>spouse  Married<span class="sc">-</span>spouse<span class="sc">-</span>absent</span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a> <span class="sc">&lt;=</span><span class="dv">50</span>K <span class="fl">0.16099810</span>       <span class="fl">0.0005661827</span>           <span class="fl">0.3350588</span>            <span class="fl">0.015570025</span></span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a> <span class="sc">&gt;</span><span class="dv">50</span>K  <span class="fl">0.05912334</span>       <span class="fl">0.0014016310</span>           <span class="fl">0.8528287</span>            <span class="fl">0.004459735</span></span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a>        Never<span class="sc">-</span>married   Separated    Widowed</span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a> <span class="sc">&lt;=</span><span class="dv">50</span>K     <span class="fl">0.41222146</span> <span class="fl">0.038823958</span> <span class="fl">0.03676143</span></span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a> <span class="sc">&gt;</span><span class="dv">50</span>K      <span class="fl">0.06269113</span> <span class="fl">0.008537207</span> <span class="fl">0.01095821</span></span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a>Feature<span class="sc">:</span> V7 </span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>Type<span class="sc">:</span> Categorical</span>
+<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a>        Adm<span class="sc">-</span>clerical  Armed<span class="sc">-</span>Forces  Craft<span class="sc">-</span>repair  Exec<span class="sc">-</span>managerial</span>
+<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a> <span class="sc">&lt;=</span><span class="dv">50</span>K    <span class="fl">0.13196410</span>  <span class="fl">0.0003638716</span>     <span class="fl">0.1282041</span>       <span class="fl">0.08486294</span></span>
+<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a> <span class="sc">&gt;</span><span class="dv">50</span>K     <span class="fl">0.06467218</span>  <span class="fl">0.0002546149</span>     <span class="fl">0.1183959</span>       <span class="fl">0.25066836</span></span>
+<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a>        Farming<span class="sc">-</span>fishing  Handlers<span class="sc">-</span>cleaners  Machine<span class="sc">-</span>op<span class="sc">-</span>inspct  Other<span class="sc">-</span>service</span>
+<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a> <span class="sc">&lt;=</span><span class="dv">50</span>K       <span class="fl">0.03557856</span>         <span class="fl">0.05195278</span>         <span class="fl">0.07087410</span>     <span class="fl">0.12771893</span></span>
+<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a> <span class="sc">&gt;</span><span class="dv">50</span>K        <span class="fl">0.01476766</span>         <span class="fl">0.01107575</span>         <span class="fl">0.03195417</span>     <span class="fl">0.01756843</span></span>
+<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a>        Priv<span class="sc">-</span>house<span class="sc">-</span>serv  Prof<span class="sc">-</span>specialty  Protective<span class="sc">-</span>serv     Sales</span>
+<span id="cb8-72"><a href="#cb8-72" aria-hidden="true" tabindex="-1"></a> <span class="sc">&lt;=</span><span class="dv">50</span>K     <span class="fl">0.0060240964</span>      <span class="fl">0.09226166</span>       <span class="fl">0.01774885</span> <span class="fl">0.1078677</span></span>
+<span id="cb8-73"><a href="#cb8-73" aria-hidden="true" tabindex="-1"></a> <span class="sc">&gt;</span><span class="dv">50</span>K      <span class="fl">0.0002546149</span>      <span class="fl">0.23679185</span>       <span class="fl">0.02698918</span> <span class="fl">0.1252705</span></span>
+<span id="cb8-74"><a href="#cb8-74" aria-hidden="true" tabindex="-1"></a>        Tech<span class="sc">-</span>support  Transport<span class="sc">-</span>moving</span>
+<span id="cb8-75"><a href="#cb8-75" aria-hidden="true" tabindex="-1"></a> <span class="sc">&lt;=</span><span class="dv">50</span>K    <span class="fl">0.02611789</span>        <span class="fl">0.05166977</span></span>
+<span id="cb8-76"><a href="#cb8-76" aria-hidden="true" tabindex="-1"></a> <span class="sc">&gt;</span><span class="dv">50</span>K     <span class="fl">0.03615532</span>        <span class="fl">0.04086569</span></span>
+<span id="cb8-77"><a href="#cb8-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-78"><a href="#cb8-78" aria-hidden="true" tabindex="-1"></a>Feature<span class="sc">:</span> V8 </span>
+<span id="cb8-79"><a href="#cb8-79" aria-hidden="true" tabindex="-1"></a>Type<span class="sc">:</span> Categorical</span>
+<span id="cb8-80"><a href="#cb8-80" aria-hidden="true" tabindex="-1"></a>         Husband  Not<span class="sc">-</span><span class="cf">in</span><span class="sc">-</span>family  Other<span class="sc">-</span>relative   Own<span class="sc">-</span>child  Unmarried</span>
+<span id="cb8-81"><a href="#cb8-81" aria-hidden="true" tabindex="-1"></a> <span class="sc">&lt;=</span><span class="dv">50</span>K <span class="fl">0.2942651</span>      <span class="fl">0.3013023</span>     <span class="fl">0.038218879</span> <span class="fl">0.202297177</span> <span class="fl">0.13059128</span></span>
+<span id="cb8-82"><a href="#cb8-82" aria-hidden="true" tabindex="-1"></a> <span class="sc">&gt;</span><span class="dv">50</span>K  <span class="fl">0.7543010</span>      <span class="fl">0.1092137</span>     <span class="fl">0.004842615</span> <span class="fl">0.008665732</span> <span class="fl">0.02790875</span></span>
+<span id="cb8-83"><a href="#cb8-83" aria-hidden="true" tabindex="-1"></a>             Wife</span>
+<span id="cb8-84"><a href="#cb8-84" aria-hidden="true" tabindex="-1"></a> <span class="sc">&lt;=</span><span class="dv">50</span>K <span class="fl">0.03332524</span></span>
+<span id="cb8-85"><a href="#cb8-85" aria-hidden="true" tabindex="-1"></a> <span class="sc">&gt;</span><span class="dv">50</span>K  <span class="fl">0.09506818</span></span>
+<span id="cb8-86"><a href="#cb8-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-87"><a href="#cb8-87" aria-hidden="true" tabindex="-1"></a>Feature<span class="sc">:</span> V9 </span>
+<span id="cb8-88"><a href="#cb8-88" aria-hidden="true" tabindex="-1"></a>Type<span class="sc">:</span> Categorical</span>
+<span id="cb8-89"><a href="#cb8-89" aria-hidden="true" tabindex="-1"></a>        Amer<span class="sc">-</span>Indian<span class="sc">-</span>Eskimo  Asian<span class="sc">-</span>Pac<span class="sc">-</span>Islander      Black       Other     White</span>
+<span id="cb8-90"><a href="#cb8-90" aria-hidden="true" tabindex="-1"></a> <span class="sc">&lt;=</span><span class="dv">50</span>K         <span class="fl">0.011162791</span>          <span class="fl">0.03089990</span> <span class="fl">0.11073812</span> <span class="fl">0.009989889</span> <span class="fl">0.8372093</span></span>
+<span id="cb8-91"><a href="#cb8-91" aria-hidden="true" tabindex="-1"></a> <span class="sc">&gt;</span><span class="dv">50</span>K          <span class="fl">0.004715779</span>          <span class="fl">0.03530461</span> <span class="fl">0.04945195</span> <span class="fl">0.003313790</span> <span class="fl">0.9072139</span></span>
+<span id="cb8-92"><a href="#cb8-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-93"><a href="#cb8-93" aria-hidden="true" tabindex="-1"></a>Feature<span class="sc">:</span> V10 </span>
+<span id="cb8-94"><a href="#cb8-94" aria-hidden="true" tabindex="-1"></a>Type<span class="sc">:</span> Categorical</span>
+<span id="cb8-95"><a href="#cb8-95" aria-hidden="true" tabindex="-1"></a>          Female      Male</span>
+<span id="cb8-96"><a href="#cb8-96" aria-hidden="true" tabindex="-1"></a> <span class="sc">&lt;=</span><span class="dv">50</span>K <span class="fl">0.3880349</span> <span class="fl">0.6119651</span></span>
+<span id="cb8-97"><a href="#cb8-97" aria-hidden="true" tabindex="-1"></a> <span class="sc">&gt;</span><span class="dv">50</span>K  <span class="fl">0.1504526</span> <span class="fl">0.8495474</span></span>
+<span id="cb8-98"><a href="#cb8-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-99"><a href="#cb8-99" aria-hidden="true" tabindex="-1"></a>Feature<span class="sc">:</span> V11 </span>
+<span id="cb8-100"><a href="#cb8-100" aria-hidden="true" tabindex="-1"></a>Type<span class="sc">:</span> Numeric</span>
+<span id="cb8-101"><a href="#cb8-101" aria-hidden="true" tabindex="-1"></a>            Mean         SD</span>
+<span id="cb8-102"><a href="#cb8-102" aria-hidden="true" tabindex="-1"></a> <span class="sc">&lt;=</span><span class="dv">50</span>K  <span class="fl">148.7525</span>   <span class="fl">963.1393</span></span>
+<span id="cb8-103"><a href="#cb8-103" aria-hidden="true" tabindex="-1"></a> <span class="sc">&gt;</span><span class="dv">50</span>K  <span class="fl">4006.1425</span> <span class="fl">14570.3790</span></span>
+<span id="cb8-104"><a href="#cb8-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-105"><a href="#cb8-105" aria-hidden="true" tabindex="-1"></a>Feature<span class="sc">:</span> V12 </span>
+<span id="cb8-106"><a href="#cb8-106" aria-hidden="true" tabindex="-1"></a>Type<span class="sc">:</span> Numeric</span>
+<span id="cb8-107"><a href="#cb8-107" aria-hidden="true" tabindex="-1"></a>            Mean       SD</span>
+<span id="cb8-108"><a href="#cb8-108" aria-hidden="true" tabindex="-1"></a> <span class="sc">&lt;=</span><span class="dv">50</span>K  <span class="fl">53.14292</span> <span class="fl">310.7558</span></span>
+<span id="cb8-109"><a href="#cb8-109" aria-hidden="true" tabindex="-1"></a> <span class="sc">&gt;</span><span class="dv">50</span>K  <span class="fl">195.00153</span> <span class="fl">595.4876</span></span>
+<span id="cb8-110"><a href="#cb8-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-111"><a href="#cb8-111" aria-hidden="true" tabindex="-1"></a>Feature<span class="sc">:</span> V13 </span>
+<span id="cb8-112"><a href="#cb8-112" aria-hidden="true" tabindex="-1"></a>Type<span class="sc">:</span> Numeric</span>
+<span id="cb8-113"><a href="#cb8-113" aria-hidden="true" tabindex="-1"></a>           Mean       SD</span>
+<span id="cb8-114"><a href="#cb8-114" aria-hidden="true" tabindex="-1"></a> <span class="sc">&lt;=</span><span class="dv">50</span>K <span class="fl">38.84021</span> <span class="fl">12.31899</span></span>
+<span id="cb8-115"><a href="#cb8-115" aria-hidden="true" tabindex="-1"></a> <span class="sc">&gt;</span><span class="dv">50</span>K  <span class="fl">45.47303</span> <span class="fl">11.01297</span></span>
+<span id="cb8-116"><a href="#cb8-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-117"><a href="#cb8-117" aria-hidden="true" tabindex="-1"></a>Feature<span class="sc">:</span> V14 </span>
+<span id="cb8-118"><a href="#cb8-118" aria-hidden="true" tabindex="-1"></a>Type<span class="sc">:</span> Categorical</span>
+<span id="cb8-119"><a href="#cb8-119" aria-hidden="true" tabindex="-1"></a>           Cambodia      Canada       China     Columbia        Cuba</span>
+<span id="cb8-120"><a href="#cb8-120" aria-hidden="true" tabindex="-1"></a> <span class="sc">&lt;=</span><span class="dv">50</span>K <span class="fl">0.0005250192</span> <span class="fl">0.003352046</span> <span class="fl">0.002261621</span> <span class="fl">0.0023423933</span> <span class="fl">0.002867412</span></span>
+<span id="cb8-121"><a href="#cb8-121" aria-hidden="true" tabindex="-1"></a> <span class="sc">&gt;</span><span class="dv">50</span>K  <span class="fl">0.0010149708</span> <span class="fl">0.005074854</span> <span class="fl">0.002664298</span> <span class="fl">0.0003806141</span> <span class="fl">0.003298655</span></span>
+<span id="cb8-122"><a href="#cb8-122" aria-hidden="true" tabindex="-1"></a>        Dominican<span class="sc">-</span>Republic      Ecuador  El<span class="sc">-</span>Salvador     England       France</span>
+<span id="cb8-123"><a href="#cb8-123" aria-hidden="true" tabindex="-1"></a> <span class="sc">&lt;=</span><span class="dv">50</span>K        <span class="fl">0.0027866403</span> <span class="fl">0.0010096523</span>  <span class="fl">0.003957837</span> <span class="fl">0.002463552</span> <span class="fl">0.0007269496</span></span>
+<span id="cb8-124"><a href="#cb8-124" aria-hidden="true" tabindex="-1"></a> <span class="sc">&gt;</span><span class="dv">50</span>K         <span class="fl">0.0003806141</span> <span class="fl">0.0006343568</span>  <span class="fl">0.001268714</span> <span class="fl">0.003933012</span> <span class="fl">0.0016493276</span></span>
+<span id="cb8-125"><a href="#cb8-125" aria-hidden="true" tabindex="-1"></a>           Germany      Greece    Guatemala        Haiti  Holand<span class="sc">-</span>Netherlands</span>
+<span id="cb8-126"><a href="#cb8-126" aria-hidden="true" tabindex="-1"></a> <span class="sc">&lt;=</span><span class="dv">50</span>K <span class="fl">0.003796293</span> <span class="fl">0.000888494</span> <span class="fl">0.0025039376</span> <span class="fl">0.0016558297</span>        <span class="fl">8.077218e-05</span></span>
+<span id="cb8-127"><a href="#cb8-127" aria-hidden="true" tabindex="-1"></a> <span class="sc">&gt;</span><span class="dv">50</span>K  <span class="fl">0.005709211</span> <span class="fl">0.001141842</span> <span class="fl">0.0005074854</span> <span class="fl">0.0006343568</span>        <span class="fl">1.268714e-04</span></span>
+<span id="cb8-128"><a href="#cb8-128" aria-hidden="true" tabindex="-1"></a>           Honduras         Hong      Hungary       India        Iran</span>
+<span id="cb8-129"><a href="#cb8-129" aria-hidden="true" tabindex="-1"></a> <span class="sc">&lt;=</span><span class="dv">50</span>K <span class="fl">0.0005250192</span> <span class="fl">0.0006057914</span> <span class="fl">0.0004442470</span> <span class="fl">0.002463552</span> <span class="fl">0.001050038</span></span>
+<span id="cb8-130"><a href="#cb8-130" aria-hidden="true" tabindex="-1"></a> <span class="sc">&gt;</span><span class="dv">50</span>K  <span class="fl">0.0002537427</span> <span class="fl">0.0008880995</span> <span class="fl">0.0005074854</span> <span class="fl">0.005201725</span> <span class="fl">0.002410556</span></span>
+<span id="cb8-131"><a href="#cb8-131" aria-hidden="true" tabindex="-1"></a>            Ireland       Italy     Jamaica       Japan         Laos</span>
+<span id="cb8-132"><a href="#cb8-132" aria-hidden="true" tabindex="-1"></a> <span class="sc">&lt;=</span><span class="dv">50</span>K <span class="fl">0.0008077218</span> <span class="fl">0.001978918</span> <span class="fl">0.002907799</span> <span class="fl">0.001575058</span> <span class="fl">0.0006865635</span></span>
+<span id="cb8-133"><a href="#cb8-133" aria-hidden="true" tabindex="-1"></a> <span class="sc">&gt;</span><span class="dv">50</span>K  <span class="fl">0.0007612281</span> <span class="fl">0.003298655</span> <span class="fl">0.001395585</span> <span class="fl">0.003171784</span> <span class="fl">0.0003806141</span></span>
+<span id="cb8-134"><a href="#cb8-134" aria-hidden="true" tabindex="-1"></a>            Mexico    Nicaragua  Outlying<span class="sc">-</span><span class="fu">US</span>(Guam<span class="sc">-</span>USVI<span class="sc">-</span>etc)         Peru</span>
+<span id="cb8-135"><a href="#cb8-135" aria-hidden="true" tabindex="-1"></a> <span class="sc">&lt;=</span><span class="dv">50</span>K <span class="fl">0.024675902</span> <span class="fl">0.0013327410</span>                <span class="fl">0.0006057914</span> <span class="fl">0.0012115827</span></span>
+<span id="cb8-136"><a href="#cb8-136" aria-hidden="true" tabindex="-1"></a> <span class="sc">&gt;</span><span class="dv">50</span>K  <span class="fl">0.004313626</span> <span class="fl">0.0003806141</span>                <span class="fl">0.0001268714</span> <span class="fl">0.0003806141</span></span>
+<span id="cb8-137"><a href="#cb8-137" aria-hidden="true" tabindex="-1"></a>        Philippines      Poland     Portugal  Puerto<span class="sc">-</span>Rico     Scotland</span>
+<span id="cb8-138"><a href="#cb8-138" aria-hidden="true" tabindex="-1"></a> <span class="sc">&lt;=</span><span class="dv">50</span>K  <span class="fl">0.005573281</span> <span class="fl">0.001978918</span> <span class="fl">0.0013731271</span>  <span class="fl">0.004159767</span> <span class="fl">0.0004038609</span></span>
+<span id="cb8-139"><a href="#cb8-139" aria-hidden="true" tabindex="-1"></a> <span class="sc">&gt;</span><span class="dv">50</span>K   <span class="fl">0.007866024</span> <span class="fl">0.001649328</span> <span class="fl">0.0006343568</span>  <span class="fl">0.001649328</span> <span class="fl">0.0005074854</span></span>
+<span id="cb8-140"><a href="#cb8-140" aria-hidden="true" tabindex="-1"></a>             South      Taiwan     Thailand  Trinadad<span class="sc">&amp;</span>Tobago  United<span class="sc">-</span>States</span>
+<span id="cb8-141"><a href="#cb8-141" aria-hidden="true" tabindex="-1"></a> <span class="sc">&lt;=</span><span class="dv">50</span>K <span class="fl">0.002625096</span> <span class="fl">0.001292355</span> <span class="fl">0.0006461775</span>     <span class="fl">0.0007269496</span>      <span class="fl">0.8884940</span></span>
+<span id="cb8-142"><a href="#cb8-142" aria-hidden="true" tabindex="-1"></a> <span class="sc">&gt;</span><span class="dv">50</span>K  <span class="fl">0.002156813</span> <span class="fl">0.002664298</span> <span class="fl">0.0005074854</span>     <span class="fl">0.0003806141</span>      <span class="fl">0.9099213</span></span>
+<span id="cb8-143"><a href="#cb8-143" aria-hidden="true" tabindex="-1"></a>            Vietnam   Yugoslavia</span>
+<span id="cb8-144"><a href="#cb8-144" aria-hidden="true" tabindex="-1"></a> <span class="sc">&lt;=</span><span class="dv">50</span>K <span class="fl">0.0025443237</span> <span class="fl">0.0004442470</span></span>
+<span id="cb8-145"><a href="#cb8-145" aria-hidden="true" tabindex="-1"></a> <span class="sc">&gt;</span><span class="dv">50</span>K  <span class="fl">0.0007612281</span> <span class="fl">0.0008880995</span></span>
+<span id="cb8-146"><a href="#cb8-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-147"><a href="#cb8-147" aria-hidden="true" tabindex="-1"></a><span class="sc">==</span><span class="er">===============</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -827,15 +827,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>Confmat</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       Predict &lt;=50K Predict &gt;50K</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;=50K         11547          888</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &gt;50K           1863         1983</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>      Predict <span class="sc">&lt;=</span><span class="dv">50</span>K Predict <span class="sc">&gt;</span><span class="dv">50</span>K</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="sc">&lt;=</span><span class="dv">50</span>K         <span class="dv">11547</span>          <span class="dv">888</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span><span class="dv">50</span>K           <span class="dv">1863</span>         <span class="dv">1983</span></span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Total accuary ="</span>, acc)</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Total accuary = 0.83103</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>Total accuary <span class="ot">=</span> <span class="fl">0.83103</span></span>
 <span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="fu">proc.time</span>() <span class="sc">-</span> ptm</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    user  system elapsed </span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   0.289   0.015   0.305</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>   user  system elapsed </span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fl">0.285</span>   <span class="fl">0.016</span>   <span class="fl">0.304</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 

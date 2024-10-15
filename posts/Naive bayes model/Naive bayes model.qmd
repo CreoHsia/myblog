@@ -5,19 +5,19 @@ date: "2024-10-14"
 description: "A self use function for Naive Bayes classifier"
 format: 
   html:
-    #code-fold: true # 折叠代码块
+    highlight-style: ayu
     code-fold: true
     code-copy: true  # 代码块显示复制按钮
     code-overflow: 'scroll'
     toc: true
-    toc-depth: 2
+    toc-depth: 3
     number-sections: true
     editor: visual
     
 knitr:
   opts_chunk: 
     collapse: true
-    comment: "#>" 
+    comment: "" 
 ---
 
 ------------------------------------------------------------------------
@@ -241,6 +241,7 @@ roc_auc <- function(true_labels, predicted_probs) {
 ```
 
 ## Function `plot.roc_auc`
+
 A `ggplot2` plot displaying the ROC curves for all classes. Each class is represented by a different color, and the AUC values are shown on the plot to summarize the classifier’s performance for each class.
 
 ```{r}
@@ -276,6 +277,7 @@ plot.roc_auc <- function(x, ...) {
 ```
 
 ## A real example
+
 we apply the custom Naive Bayes classifier that we implemented to the Adult dataset (The data can be found in [Github](https://github.com/CreoHsia/myblog/tree/main/posts/Naive%20bayes%20model)) for classification. We also compare its performance in terms of speed with the naiveBayes function from the e1071 R package.
 
 ```{r}
@@ -467,4 +469,3 @@ cat("Total accuary =", acc)
 proc.time() - ptm
 
 ```
-
