@@ -2,17 +2,7 @@
   {
     "listing": "/blog.html",
     "items": [
-      "/posts/Naive bayes model/Naive bayes model.html",
-      "/posts/Rcpp study/Rcpp study.html"
-    ]
-  },
-  {
-    "listing": "/resource/resource.html",
-    "items": []
-  },
-  {
-    "listing": "/resource.html",
-    "items": [
+      "/posts/python/python3.html",
       "/posts/Naive bayes model/Naive bayes model.html",
       "/posts/Rcpp study/Rcpp study.html"
     ]

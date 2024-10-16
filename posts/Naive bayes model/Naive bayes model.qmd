@@ -3,6 +3,7 @@ title: "Naive Bayes Model"
 author: "Creo Hsia"
 date: "2024-10-14"
 description: "A self use function for Naive Bayes classifier"
+categories: [ML, Classification]
 format: 
   html:
     highlight-style: ayu
@@ -13,11 +14,11 @@ format:
     toc-depth: 3
     number-sections: true
     editor: visual
-    
 knitr:
   opts_chunk: 
+    fig.path: "image/"
     collapse: true
-    comment: "" 
+    comment: "#>|"
 ---
 
 ------------------------------------------------------------------------
@@ -278,11 +279,10 @@ plot.roc_auc <- function(x, ...) {
 
 ## A real example
 
-we apply the custom Naive Bayes classifier that we implemented to the Adult dataset (The data can be found in [Github](https://github.com/CreoHsia/myblog/tree/main/posts/Naive%20bayes%20model)) for classification. We also compare its performance in terms of speed with the naiveBayes function from the e1071 R package.
+We apply the custom Naive Bayes classifier to the Adult dataset for classification (the data can be found in [Github](https://github.com/CreoHsia/myblog/tree/main/posts/Naive%20bayes%20model)) . We also compare its performance in terms of speed with the naiveBayes function from the e1071 R package.
 
 ```{r}
 #| code-fold: false
-
 library(ggplot2)
 data <- read.csv("adult.data",
                  na.strings = " ?", header=FALSE)
@@ -306,9 +306,13 @@ Faster than the function in `e1071`.
 
 ```{r}
 #| code-fold: false
+confusion_matrix(newdata$V15,pred <- predict(model,newdata,"class"))
+```
+
+```{r}
+#| code-fold: false
 #| fig-keep: all
 #| fig-show: hold
-confusion_matrix(newdata$V15,pred <- predict(model,newdata,"class"))
 plot(roc)
 ```
 

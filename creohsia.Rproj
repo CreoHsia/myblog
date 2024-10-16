@@ -11,3 +11,7 @@ Encoding: UTF-8
 
 RnwWeave: Sweave
 LaTeX: pdfLaTeX
+
+PythonType: virtualenv
+PythonVersion: 3.12.6
+PythonPath: ~/.venv/bin/python3.12

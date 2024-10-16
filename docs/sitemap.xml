@@ -1,31 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://creohsia.github.io/myblog/blog.html</loc>
+    <lastmod>2024-10-16T10:15:54.455Z</lastmod>
+  </url>
+  <url>
     <loc>https://creohsia.github.io/myblog/index.html</loc>
     <lastmod>2024-10-15T15:52:49.935Z</lastmod>
   </url>
   <url>
-    <loc>https://creohsia.github.io/myblog/blog.html</loc>
-    <lastmod>2024-10-11T09:23:17.865Z</lastmod>
-  </url>
-  <url>
-    <loc>https://creohsia.github.io/myblog/posts/Naive bayes model/Naive bayes model.html</loc>
-    <lastmod>2024-10-15T15:44:31.713Z</lastmod>
+    <loc>https://creohsia.github.io/myblog/posts/python/python3.html</loc>
+    <lastmod>2024-10-16T14:58:14.232Z</lastmod>
   </url>
   <url>
     <loc>https://creohsia.github.io/myblog/posts/Rcpp study/Rcpp study.html</loc>
     <lastmod>2024-10-15T10:41:28.527Z</lastmod>
   </url>
   <url>
-    <loc>https://creohsia.github.io/myblog/Untitled.html</loc>
-    <lastmod>2024-10-15T15:15:49.404Z</lastmod>
-  </url>
-  <url>
-    <loc>https://creohsia.github.io/myblog/resource.html</loc>
-    <lastmod>2024-10-15T15:32:59.820Z</lastmod>
+    <loc>https://creohsia.github.io/myblog/posts/Naive bayes model/Naive bayes model.html</loc>
+    <lastmod>2024-10-16T13:26:26.946Z</lastmod>
   </url>
   <url>
     <loc>https://creohsia.github.io/myblog/resource/resource.html</loc>
-    <lastmod>2024-10-15T15:55:04.227Z</lastmod>
+    <lastmod>2024-10-16T08:45:15.547Z</lastmod>
   </url>
 </urlset>

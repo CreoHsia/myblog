@@ -31,5 +31,8 @@
   },
   "resource/resource.qmd": {
     "resource.html": "466b386e"
+  },
+  "posts/python/python3.ipynb": {
+    "python3.html": "a6380407"
   }
 }
