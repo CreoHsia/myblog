@@ -17,9 +17,9 @@ website:
     border: true
     search: true
     left:
-      - text: 'Blogs'
+      - text: 'Blog'
         href: blog.qmd
-      - text: "Resources"
+      - text: "Resource"
         href: resource/resource.qmd
     right: 
       - icon: twitter
@@ -41,9 +41,7 @@ website:
 
 format:
   html:
-    theme: 
-      light: [cosmo,theme-light.scss]
-      dark: [cosmo,theme-dark.scss]
+    theme: [cosmo,theme-light.scss]
     css: style.css
     highlight-style: ayu
     

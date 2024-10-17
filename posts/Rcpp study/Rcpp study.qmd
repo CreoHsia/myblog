@@ -282,7 +282,7 @@ Rprintf( format, variables)
 The first argument is a format string, and subsequent arguments are the values to be inserted into the formatted string. Some format specifier is presented below:
 
 | **specifier** | **explanation** |
-|----|----|
+|------------------------------------|------------------------------------|
 | `%i` | printing signed integer (`int`) |
 | `%u` | printing unsigned integer (`unsigned int`) |
 | `%f` | printing floating point number (`double`) |
@@ -310,7 +310,7 @@ All the basic data types and data structures provided by R are available in Rcpp
 The table below presents the correspondence of data types between R/Rcpp/C++.
 
 | **Value** | **R vector** | **Rcpp vector** | **Rcpp matrix** | **Rcpp scalar** | **C++ scalar** |
-|----|----|----|----|----|----|
+|------------|------------|------------|------------|------------|------------|
 | Logical | `logical` | `LogicalVector` | `LogicalMatrix` | \- | `bool` |
 | Integer | `integer` | `IntegerVector` | `IntegerMatrix` | \- | `int` |
 | Real | `numeric` | `NumericVector` | `NumericMatrix` | \- | `double` |
@@ -458,7 +458,7 @@ int n = v.length(); // 5
 The `vector` object in Rcpp has methods functiongs listed below
 
 | Method | Description |
-|----|----|
+|------------------------------------|------------------------------------|
 | `size()` | Returns the number of elements of this vector object. |
 | `names()` | Returns the element names of this vector object as `CharacterVector`. |
 | `offset(name)`, `findName(name)` | Returns the numerical index of the element specified by the character string `name`. |
@@ -617,7 +617,7 @@ NumericMatrix::Sub sub = m( Range(0,1) , Range(2,3) );
 Since Matrix is actually `Vector`, Matrix basically has the same member functions as `Vector`. Thus, member functions unique to `Matrix` are only presented below.
 
 | Method | Description |
-|----|----|
+|------------------------------------|------------------------------------|
 | `nrow()` or `rows()` | Returns the number of rows. |
 | `ncol()` or `cols()` | Returns the number of columns. |
 | `row(i)` | Returns a reference `Vector::Row` to the `i`-th row. |
@@ -911,7 +911,7 @@ You can specify which column of the `DataFrame` you want to access using differe
 ### Member functions
 
 | Method | Description |
-|----|----|
+|------------------------------------|------------------------------------|
 | `nrows()` | Returns the number of rows. |
 | `ncol()` | Returns the number of columns. |
 | `length()` | Returns the number of columns. |
@@ -1079,7 +1079,7 @@ Rcout << s << "\n";
 ### Member functions
 
 | Method | Description |
-|----|----|
+|------------------------------------|------------------------------------|
 | `replace_first(str, new_str)` | Replace the first substring that matches the string `str` with the string `new_str`. |
 | `replace_last(str, new_str)` | Replace the last substring that matches the string `str` with the string `new_str`. |
 | `replace_all(str, new_str)` | Replace all substrings that match the string `str` with the string `new_str`. |
@@ -1133,7 +1133,7 @@ Date d(1, 2, 2000);  // 2000-01-02 (mon, day, year)
 By using these operators, you can perform addition of days (`+`), difference calculation of date (`-`), and comparison of dates (`<`, `<=`, `>`, `>=`, `==`, `!=`) . \### Member functions
 
 | Method | Description |
-|----|----|
+|------------------------------------|------------------------------------|
 | `format()` | Returns the date as a `std::string` using the same specification as base R. The default format is `YYYY-MM-DD`. |
 | `getDay()` | Returns the day of the date. |
 | `getMonth()` | Returns the month of the date. |

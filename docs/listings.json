@@ -2,7 +2,7 @@
   {
     "listing": "/blog.html",
     "items": [
-      "/posts/python/python3.html",
+      "/posts/ROC and AUC/ROC and AUC.html",
       "/posts/Naive bayes model/Naive bayes model.html",
       "/posts/Rcpp study/Rcpp study.html"
     ]

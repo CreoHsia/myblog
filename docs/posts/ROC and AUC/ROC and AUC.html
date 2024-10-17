@@ -6,6 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="description" content="A review of sensitivity, specificity, ROC curve and auc">
 
 <title>Sensitivity, Specificity, ROC Curve and AUC – Home</title>
 <style>
@@ -35,12 +36,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -101,10 +100,11 @@ window.Quarto = {
 
 <link rel="stylesheet" href="../../style.css">
 <meta property="og:title" content="Sensitivity, Specificity, ROC Curve and AUC – Home">
+<meta property="og:description" content="A review of sensitivity, specificity, ROC curve and auc">
 <meta property="og:site_name" content="Home">
 </head>
 
-<body class="nav-fixed fullcontent">
+<body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -126,11 +126,11 @@ window.Quarto = {
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link" href="../../blog.html"> 
-<span class="menu-text">Blogs</span></a>
+<span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../resource/resource.html"> 
-<span class="menu-text">Resources</span></a>
+<span class="menu-text">Resource</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
@@ -152,7 +152,6 @@ window.Quarto = {
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
-  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -162,7 +161,16 @@ window.Quarto = {
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
       <h1 class="title">Sensitivity, Specificity, ROC Curve and AUC</h1>
-                      </div>
+                  <div>
+        <div class="description">
+          A review of sensitivity, specificity, ROC curve and auc
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">ML</div>
+                <div class="quarto-category">Classification</div>
+              </div>
+                  </div>
   </div>
     
   
@@ -177,7 +185,20 @@ window.Quarto = {
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#sensitivity-and-specificity" id="toc-sensitivity-and-specificity" class="nav-link active" data-scroll-target="#sensitivity-and-specificity"><span class="header-section-number">1</span> Sensitivity and Specificity</a></li>
+  <li><a href="#roc-curve" id="toc-roc-curve" class="nav-link" data-scroll-target="#roc-curve"><span class="header-section-number">2</span> ROC Curve</a></li>
+  <li><a href="#auc" id="toc-auc" class="nav-link" data-scroll-target="#auc"><span class="header-section-number">3</span> AUC</a>
+  <ul class="collapse">
+  <li><a href="#connection-between-auc-and-mann-whitney-u-statistic" id="toc-connection-between-auc-and-mann-whitney-u-statistic" class="nav-link" data-scroll-target="#connection-between-auc-and-mann-whitney-u-statistic"><span class="header-section-number">3.1</span> Connection between AUC and Mann-Whitney U statistic</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
 
@@ -185,43 +206,109 @@ window.Quarto = {
 
 
 
-<section id="definition" class="level2">
-<h2 class="anchored" data-anchor-id="definition">Definition</h2>
-<section id="sensitivity-and-specificity" class="level3">
-<h3 class="anchored" data-anchor-id="sensitivity-and-specificity">Sensitivity and Specificity</h3>
+<section id="sensitivity-and-specificity" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="sensitivity-and-specificity"><span class="header-section-number">1</span> Sensitivity and Specificity</h2>
 <p><strong>Sensitivity</strong> measures the <u>proportion of positive results</u> out of <u>all truly positive samples.</u> In other words, a test’s sensitivity is its ability to correctly identify those with the disease (the true positives) while minimizing the <u>number of false negative results</u>.</p>
 <p><strong>Specificity</strong> measures the <u>proportion of negative test result</u> out of <u>all truly negative samples.</u> In other words, a test’s specificity is its ability to correctly identify those without the disease (the true negatives) while minimizing false positive results.</p>
 <p><strong>False results</strong> are also known as testing errors. The consequences of atesting error- a false positive or a false negative- are not equivalent.</p>
 <p>The following is the so-called confusion matrix.</p>
-<p><img src="python3_files/figure-html/6ca6835e-8c16-4aa2-acbf-9e85ce9d1684-1-aa54178a-3986-427b-8abf-85c8b49a689f.png" class="img-fluid"></p>
+<p><img src="ROC and AUC_files/figure-html/6ca6835e-8c16-4aa2-acbf-9e85ce9d1684-1-aa54178a-3986-427b-8abf-85c8b49a689f.png" class="img-fluid"></p>
 <p>Mthematically: + Sensitivity = TP/(TP+FN) + Specificity = TN/(TN+FP)</p>
 </section>
-<section id="roc-curve" class="level3">
-<h3 class="anchored" data-anchor-id="roc-curve">ROC Curve</h3>
+<section id="roc-curve" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="roc-curve"><span class="header-section-number">2</span> ROC Curve</h2>
 <p>The <strong>Receiver Operating Characteristic (ROC) curve</strong> is a graphical representation used to evaluate the performance of a binary classifier. When we have a sequence of predicted probabilities for two classes, we need to apply a threshold to classify them. Different thresholds lead to different classification results, and for each result, we can calculate sensitivity and specificity. The ROC curve is generated by plotting the <strong>true positive rate (TPR)</strong> against the <strong>false positive rate (FPR)</strong> (which is 1-specificity) for every possible threshold (or, more practically, at selected intervals). This provides a visual way to assess the trade-offs between TPR and FPR across varying threshold values.</p>
 <p>In binary classification, class predictions for each instance are often based on a <strong>continuous random variable</strong> <span class="math inline">\(X\)</span> , which represents a “score” computed for the instance (e.g., the estimated probability in logistic regression). The variable <span class="math inline">\(X\)</span> indicates the likelihood of being classified as “positive”. Since we have two groups (true positives and true negatives), the distribution of <span class="math inline">\(X\)</span> differs between these groups, with densities denoted as <span class="math inline">\(f_1\)</span> for the positive class and <span class="math inline">\(f_2\)</span> for the negative class.</p>
 <p>The true True Positive Rate (TPR) at a threshold <span class="math inline">\(T\)</span> is given by: <span class="math display">\[
-TPR(T) = \int_{T}^\infty f_1(x) , dx
+TPR(T) = \int_{T}^\infty f_1(x)  dx
 \]</span></p>
 <p>Similarly, the False Positive Rate (FPR) is expressed as: <span class="math display">\[
-FPR(T) = \int_{T}^\infty f_2(x) , dx
+FPR(T) = \int_{T}^\infty f_2(x)  dx
 \]</span></p>
 <p>The ROC curve is generated by plotting <span class="math inline">\(TPR(T)\)</span> versus <span class="math inline">\(FPR(T)\)</span> , with <span class="math inline">\(T\)</span> as the varying parameter.</p>
 <p>The following example comes from <a href="https://en.wikipedia.org/wiki/Receiver_operating_characteristic">wikipedia</a></p>
 <blockquote class="blockquote">
 <p>imagine that the blood protein levels in diseased people and healthy people are normally distributed with means of 2 g/dL and 1 g/dL respectively. A medical test might measure the level of a certain protein in a blood sample and classify any number above a certain threshold as indicating disease. The experimenter can adjust the threshold (green vertical line in the figure), which will in turn change the false positive rate. Increasing the threshold would result in fewer false positives (and more false negatives), corresponding to a leftward movement on the curve. The actual shape of the curve is determined by how much overlap the two distributions have. <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/ROC_curves.svg/600px-ROC_curves.svg.png" class="img-fluid"></p>
 </blockquote>
+<p>While the Receiver Operating Characteristic (ROC) curve and its Area Under the Curve (AUC) are useful for assessing the overall performance of a binary classifier by focusing on the trade-off between true positive rate (sensitivity) and false positive rate (1-specificity), they <strong><em>do not provide any information</em></strong> about other important metrics such as <strong>precision</strong> and <strong>negative predictive value (NPV).</strong></p>
+<ol type="1">
+<li><p><strong>Precision</strong> (or Positive Predictive Value) measures the proportion of true positives among all positive predictions. A high precision means that when the classifier predicts a positive, it’s usually correct. The ROC curve does not consider how well the model distinguishes positives from negatives in terms of predicted labels.</p></li>
+<li><p><strong>Negative Predictive Value (NPV)</strong> is the proportion of true negatives among all negative predictions. Like precision, this metric is not captured by the ROC curve.</p></li>
+</ol>
+<p>A high sensitivity (e.g.&nbsp;0.9) and specificity (e,g. 0.9) might correspond to low values of precision and negative predictive value. See the matic below</p>
+<div id="76cc31ff-2cb2-49c7-870b-37082c43cd04" class="cell" data-execution_count="6">
+<div class="cell-output cell-output-stdout">
+<pre><code>          true
+predict    positive negative
+  positive        9      100
+  negative        1      900</code></pre>
+</div>
+</div>
+<p>We know that sensitivity=0.9 and specificity=0.9 but precision is 9/100 and NPV is 900/901.</p>
 </section>
-<section id="auc" class="level3">
-<h3 class="anchored" data-anchor-id="auc">AUC</h3>
+<section id="auc" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="auc"><span class="header-section-number">3</span> AUC</h2>
 <p>AUC is the area under the curve. How to interpret it?</p>
 <p>It is equal to the probability that a classifier will rank a <strong>randomly chosen</strong> positive instance <strong>higher</strong> than a <strong>randomly chosen</strong> negative one.</p>
 <blockquote class="blockquote">
 <p>In other words, when given one randomly selected positive instance and one randomly selected negative instance, AUC is the probability that the classifier will be able to tell which one is which.</p>
 </blockquote>
-</section>
-<section id="wating-update" class="level3">
-<h3 class="anchored" data-anchor-id="wating-update">Wating update</h3>
+<p>Mathematically, we can interpret it by the following: Let <span class="math display">\[
+\begin{aligned}
+&amp;TPR(T): T \rightarrow y(x)\\
+&amp;FPR(T): T \rightarrow x
+\end{aligned}
+\]</span> Then (the integral boundaries are reversed as large threshold T has a lower value on the x-axis) <span id="eq-AUC_prob_meaning"><span class="math display">\[
+\begin{aligned}
+AUC=&amp;\int_0^1 TPR(FPR^{-1}(x))dx\\
+=&amp;\int_{\infty}^{-\infty} TPR(T)FPR^\prime (T)dT \\
+=&amp;\int_{\infty}^{-\infty} TPR(T)f_2(T)dT\\
+=&amp;\int_{\infty}^{-\infty} \int_{T}^\infty f_1(T^\prime)dT^\prime f_2(T)dT\\
+=&amp;\int_{\infty}^{-\infty} \int_{-\infty}^\infty I(T^\prime&gt;T) f_1(T^\prime)dT^\prime f_2(T)dT\\
+=&amp;P(X_1&gt;X_2)
+\end{aligned}
+\tag{1}\]</span></span></p>
+<section id="connection-between-auc-and-mann-whitney-u-statistic" class="level3" data-number="3.1">
+<h3 data-number="3.1" class="anchored" data-anchor-id="connection-between-auc-and-mann-whitney-u-statistic"><span class="header-section-number">3.1</span> Connection between AUC and Mann-Whitney U statistic</h3>
+<p>In binary classification models, once the model fitting is complete, we obtain a set of scores for each sample, indicating the likelihood of belonging to a particular class. By <strong>adjusting the threshold</strong>, we can calculate the corresponding True Positive Rate (TPR) and False Positive Rate (FPR). In fact, we can order these scores from largest to smallest, and <strong>only when the threshold takes on these specific values will the TPR and FPR change</strong>.</p>
+<p>Starting from the highest score, we <strong>progressively lower the threshold</strong>. The first threshold is set at <strong><span class="math inline">\(p_{n_1+n_2}\)</span></strong>, where all samples fall below this value, resulting in both TPR and FPR being zero. As we adjust the threshold, either the TPR increases by one unit <span class="math inline">\((1/n_1)\)</span> or the FPR increases by one unit <span class="math inline">\((1/n_2)\)</span>, until they both reach <span class="math inline">\((1,1)\)</span> (at this point, the threshold is 0, meaning we need to set <span class="math inline">\(n_1+n_2+1\)</span> thresholds). Consequently, the Area Under the Curve (AUC) can be calculated using the following formula. The key is that with each step to the right, the number of upward steps already taken equals the number of Y-values greater than the most recent X-value (where X-values represent FPR and Y-values represent TPR):</p>
+<p><span id="eq-AUC"><span class="math display">\[
+AUC=\frac{1}{n_1n_2}\sum_i\sum_j\mathbf{1}(X_i&lt;Y_j)
+\tag{2}\]</span></span></p>
+<p>Here, <span class="math inline">\(\sum_i\sum_j\mathbf{1}(Y_i&lt;X_j)\)</span> corresponds to the well-known Wilcoxon-Mann-Whitney <span class="math inline">\(U\)</span> statistic: <span class="math display">\[
+AUC=\frac{U}{n_1n_2}
+\]</span></p>
+<p>However, the time complexity of this equation is relatively high, <span class="math inline">\(\mathcal{O}(n_1 n_2)\)</span>, so we need to find a more efficient way to calculate it.</p>
+<p>Since <span class="math display">\[
+U=\sum_{i\in P}rank_i - \frac{n_1(n_1+1)}{2} = W - \frac{n_1(n_1+1)}{2},
+\]</span></p>
+<p>we can first calculate <span class="math inline">\(W\)</span>, which has a time complexity of <span class="math inline">\(\mathcal{O}((n_1+n_2)\log(n_1+n_2))\)</span>. Here, <span class="math inline">\(P\)</span> is the positive set, and <span class="math inline">\(rank_i\)</span> represents the rank of a positive sample calculated after combining all positive and negative samples.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>An interesting point is that we can use the probabilistic interpretation of AUC (<a href="#eq-AUC_prob_meaning" class="quarto-xref">Equation&nbsp;1</a>) to compute it. Since AUC represents the probability that a classifier ranks a <strong>randomly chosen</strong> positive instance <strong>higher</strong> than a <strong>randomly chosen</strong> negative instance, we can count how many of the <span class="math inline">\(n_1 \times n_2\)</span> pairs (where <span class="math inline">\(n_1\)</span> is the number of positive samples and <span class="math inline">\(n_2\)</span> is the number of negative samples) have a positive sample score higher than the corresponding negative sample score. The result will match the value computed using (<a href="#eq-AUC" class="quarto-xref">Equation&nbsp;2</a>).</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In fact, there is a bug when using (<a href="#eq-AUC" class="quarto-xref">Equation&nbsp;2</a>) to calculate AUC. Consider cases where some samples have identical scores. In these cases, the plot won’t form a rectangle but a triangle, which could introduce some deviation. However, after accounting for ties in the Wilcoxon-Mann-Whitney <span class="math inline">\(U\)</span> statistic, we can show that the results remain the same.</p>
+</div>
+</div>
 
 
 </section>
@@ -248,150 +335,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
   toggleBodyColorPrimary();  
-  const disableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'prefetch';
-    }
-  }
-  const enableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'stylesheet';
-    }
-  }
-  const manageTransitions = (selector, allowTransitions) => {
-    const els = window.document.querySelectorAll(selector);
-    for (let i=0; i < els.length; i++) {
-      const el = els[i];
-      if (allowTransitions) {
-        el.classList.remove('notransition');
-      } else {
-        el.classList.add('notransition');
-      }
-    }
-  }
-  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
-    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
-    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
-    let newTheme = '';
-    if(darkModeDefault) {
-      newTheme = isAlternate ? baseTheme : alternateTheme;
-    } else {
-      newTheme = isAlternate ? alternateTheme : baseTheme;
-    }
-    const changeGiscusTheme = () => {
-      // From: https://github.com/giscus/giscus/issues/336
-      const sendMessage = (message) => {
-        const iframe = document.querySelector('iframe.giscus-frame');
-        if (!iframe) return;
-        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
-      }
-      sendMessage({
-        setConfig: {
-          theme: newTheme
-        }
-      });
-    }
-    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
-    if (isGiscussLoaded) {
-      changeGiscusTheme();
-    }
-  }
-  const toggleColorMode = (alternate) => {
-    // Switch the stylesheets
-    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
-    manageTransitions('#quarto-margin-sidebar .nav-link', false);
-    if (alternate) {
-      enableStylesheet(alternateStylesheets);
-      for (const sheetNode of alternateStylesheets) {
-        if (sheetNode.id === "quarto-bootstrap") {
-          toggleBodyColorMode(sheetNode);
-        }
-      }
-    } else {
-      disableStylesheet(alternateStylesheets);
-      toggleBodyColorPrimary();
-    }
-    manageTransitions('#quarto-margin-sidebar .nav-link', true);
-    // Switch the toggles
-    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
-    for (let i=0; i < toggles.length; i++) {
-      const toggle = toggles[i];
-      if (toggle) {
-        if (alternate) {
-          toggle.classList.add("alternate");     
-        } else {
-          toggle.classList.remove("alternate");
-        }
-      }
-    }
-    // Hack to workaround the fact that safari doesn't
-    // properly recolor the scrollbar when toggling (#1455)
-    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
-      manageTransitions("body", false);
-      window.scrollTo(0, 1);
-      setTimeout(() => {
-        window.scrollTo(0, 0);
-        manageTransitions("body", true);
-      }, 40);  
-    }
-  }
-  const isFileUrl = () => { 
-    return window.location.protocol === 'file:';
-  }
-  const hasAlternateSentinel = () => {  
-    let styleSentinel = getColorSchemeSentinel();
-    if (styleSentinel !== null) {
-      return styleSentinel === "alternate";
-    } else {
-      return false;
-    }
-  }
-  const setStyleSentinel = (alternate) => {
-    const value = alternate ? "alternate" : "default";
-    if (!isFileUrl()) {
-      window.localStorage.setItem("quarto-color-scheme", value);
-    } else {
-      localAlternateSentinel = value;
-    }
-  }
-  const getColorSchemeSentinel = () => {
-    if (!isFileUrl()) {
-      const storageValue = window.localStorage.getItem("quarto-color-scheme");
-      return storageValue != null ? storageValue : localAlternateSentinel;
-    } else {
-      return localAlternateSentinel;
-    }
-  }
-  const darkModeDefault = false;
-  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
-  // Dark / light mode switch
-  window.quartoToggleColorScheme = () => {
-    // Read the current dark / light value 
-    let toAlternate = !hasAlternateSentinel();
-    toggleColorMode(toAlternate);
-    setStyleSentinel(toAlternate);
-    toggleGiscusIfUsed(toAlternate, darkModeDefault);
-  };
-  // Ensure there is a toggle, if there isn't float one in the top right
-  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
-    const a = window.document.createElement('a');
-    a.classList.add('top-right');
-    a.classList.add('quarto-color-scheme-toggle');
-    a.href = "";
-    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
-    const i = window.document.createElement("i");
-    i.classList.add('bi');
-    a.appendChild(i);
-    window.document.body.appendChild(a);
-  }
-  // Switch to dark mode if need be
-  if (hasAlternateSentinel()) {
-    toggleColorMode(true);
-  } else {
-    toggleColorMode(false);
-  }
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {
